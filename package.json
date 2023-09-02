@@ -1,0 +1,26 @@
+{
+  "name": "node-js-epam-course",
+  "version": "1.0.0",
+  "description": "NodeJS Global Mentoring Program [2023 Q3-Q4]",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/BlazarQSO/NodeJS.git"
+  },
+  "keywords": [
+    "NodeJS"
+  ],
+  "author": "Siarhei Iukou",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/BlazarQSO/NodeJS/issues"
+  },
+  "homepage": "https://github.com/BlazarQSO/NodeJS#readme",
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}
