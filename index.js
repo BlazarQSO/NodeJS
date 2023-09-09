@@ -35,7 +35,7 @@ const startWritingToLogFile = () => setInterval(() => {
     };
   });
   log = '';
-}, 6000);
+}, 60000);
 
 const startProcess = () => {
   if (os.platform() === WINDOWS_PLATFORM) {
