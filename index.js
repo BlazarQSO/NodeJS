@@ -2,31 +2,21 @@ const os = require('os');
 const fs = require('fs');
 const { exec } = require('child_process');
 
-const WINDOWS_COMMAND = `powershell "Get-Process | Sort-Object CPU -Descending | Select-Object -Property Name, CPU, WorkingSet -First 1 | ForEach-Object { $_.Name + ' ' + $_.CPU + ' ' + $_.WorkingSet }"`;
-const OTHER_PLATFORM = 'ps -A -o %cpu,%mem,comm | sort -nr | head -n 1';
+const COMMANDS = {
+  WINDOWS: `powershell "Get-Process | Sort-Object CPU -Descending | Select-Object -Property Name, CPU, WorkingSet -First 1 | ForEach-Object { $_.Name + ' ' + $_.CPU + ' ' + $_.WorkingSet }"`,
+  LINUX: 'ps -A -o %cpu,%mem,comm | sort -nr | head -n 1',
+  MACOS: 'ps -A -o %cpu,%mem,comm | sort -nr | head -n 1',
+}
 
-const WINDOWS_PLATFORM = 'win32';
+const PLATFORMS = {
+  WINDOWS: 'win32',
+  MACOS: 'darwin',
+  LINUX: 'linux',
+}
+
 let log = '';
 
 const getUnixTime = () => Math.round(new Date().getTime() / 1000);
-
-const startExecProcess = (command) => {
-  exec(command, (error, stdout, stderr) => {
-    console.clear();
-    if (stdout) {
-      console.log(`stderr: ${stdout}`);
-      log += `${getUnixTime()} : ${stdout}`;
-    }
-
-    if (stderr) {
-      console.log(`stderr: ${stderr}`);
-    }
-
-    if (error !== null) {
-      console.log(`error: ${error}`);
-    }
-  });
-}
 
 const startWritingToLogFile = () => setInterval(() => {
   fs.appendFile('activityMonitor.log', log, (error) => {
@@ -37,12 +27,70 @@ const startWritingToLogFile = () => setInterval(() => {
   log = '';
 }, 60000);
 
-const startProcess = () => {
-  if (os.platform() === WINDOWS_PLATFORM) {
-    setInterval(() => startExecProcess(WINDOWS_COMMAND), 1000);
-  } else {
-    setInterval(() => startExecProcess(OTHER_PLATFORM), 1000);
+class WindowsPlatformStrategy {
+  action() {
+    return COMMANDS.WINDOWS;
   }
+}
+
+class LinuxPlatformStrategy {
+  action() {
+    return COMMANDS.LINUX;
+  }
+}
+
+class MacOSPlatformStrategy {
+  action() {
+    return COMMANDS.MACOS;
+  }
+}
+
+class PlatformStrategy {
+  strategy = ''
+
+  constructor(strategy) {
+    this.strategy = strategy;
+  }
+
+  startExecProcess = () => {
+    exec(this.strategy, (error, stdout, stderr) => {
+      console.clear();
+      if (stdout) {
+        process.stdout.write(`stdout: ${stdout}`);
+        log += `${getUnixTime()} : ${stdout}`;
+      }
+
+      if (stderr) {
+        process.stdout.write(`stderr: ${stderr}`);
+      }
+
+      if (error !== null) {
+        process.stdout.write(`error: ${error}`);
+      }
+    });
+  }
+
+  startProcess() {
+    setInterval(() => this.startExecProcess(), 1000);
+  }
+}
+
+const strategyManager = (platform) => {
+  switch (platform) {
+    case PLATFORMS.WINDOWS:
+      new PlatformStrategy(new WindowsPlatformStrategy().action()).startProcess();
+      break;
+    case PLATFORMS.LINUX:
+      new PlatformStrategy(new LinuxPlatformStrategy().action()).startProcess();
+      break;
+    case PLATFORMS.MACOS:
+      new PlatformStrategy(new MacOSPlatformStrategy().action()).startProcess();
+      break;
+  }
+}
+
+const startProcess = () => {
+  strategyManager(os.platform());
 
   startWritingToLogFile();
 }
