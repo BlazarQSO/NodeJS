@@ -1,0 +1,121 @@
+class EventEmitter {
+  listeners = {};
+
+  addListener(eventName, cb) {
+    if (!this.listeners[eventName]) {
+      this.listeners[eventName] = [];
+    }
+
+    this.listeners[eventName].push(cb);
+
+    return this;
+  }
+
+  on(eventName, cb) {
+    return this.addListener(eventName, cb);
+  }
+
+  removeListener(eventName, cb) {
+    const changeListeners = this.listeners[eventName];
+
+    if (!changeListeners) {
+      return this;
+    }
+
+    const removeElementByIndex = changeListeners.findLastIndex((listener) => listener === cb);
+    if (removeElementByIndex >= 0) {
+      changeListeners.splice(removeElementByIndex, 1);
+    }
+
+    return this;
+  }
+
+  off(eventName, cb) {
+    return this.removeListener(eventName, cb);
+  }
+
+  once(eventName, cb) {
+    if (!this.listeners[eventName]) {
+      this.listeners[eventName] = [];
+    }
+
+    const onceListener = () => {
+      cb();
+      this.off(eventName, onceListener);
+    }
+
+    this.listeners[eventName].push(onceListener);
+
+    return this;
+  }
+
+  emit(eventName, ...args) {
+    const emitListeners = this.listeners[eventName];
+
+    if (!emitListeners) {
+      return false;
+    }
+
+    emitListeners.forEach((listener) => listener(args));
+
+    return true;
+  }
+
+  listenerCount(eventName) {
+    return (this.listeners[eventName] || []).length;
+  }
+
+  rawListeners(eventName) {
+    return this.listeners[eventName];
+  }
+}
+
+const myEmitter = new EventEmitter();
+
+function c1() {
+    console.log('an event occurred!');
+}
+
+function c2() {
+    console.log('yet another event occurred!');
+}
+
+myEmitter.on('eventOne', c1); // Register for eventOne
+myEmitter.on('eventOne', c2); // Register for eventOne
+
+// Register eventOnce for one time execution
+myEmitter.once('eventOnce', () => console.log('eventOnce once fired'));
+myEmitter.once('init', () => console.log('init once fired'));
+
+// Register for 'status' event with parameters
+myEmitter.on('status', (code, msg)=> console.log(`Got ${code} and ${msg}`));
+
+myEmitter.emit('eventOne');
+
+// Emit 'eventOnce' -> After this the eventOnce will be
+// removed/unregistered automatically
+myEmitter.emit('eventOnce');
+
+myEmitter.emit('eventOne');
+myEmitter.emit('init');
+myEmitter.emit('init'); // Will not be fired
+myEmitter.emit('eventOne');
+myEmitter.emit('status', 200, 'ok');
+
+// Get listener's count
+console.log(myEmitter.listenerCount('eventOne'));
+
+// Get array of rawListeners//
+// Event registered with 'once()' will not be available here after the
+// emit has been called
+console.log(myEmitter.rawListeners('eventOne'));
+
+// Get listener's count after remove one or all listeners of 'eventOne'
+myEmitter.off('eventOne', c1);
+console.log(myEmitter.listenerCount('eventOne'));
+myEmitter.off('eventOne', c2);
+console.log(myEmitter.listenerCount('eventOne'));
+
+module.exports = {
+  EventEmitter,
+};
