@@ -1,12 +1,17 @@
-const csvtojson = require('csvtojson');
-let fs = require('fs');
+const fs = require('fs')
+const Converter = require('csvtojson').Converter;
 
-csvtojson()
-  .fromFile('./csv/file.csv')
-  .then((json) => {
-    fs.openSync('file.txt', 'w+');
-    json.forEach((line) => {
-      fs.appendFileSync('file.txt', `${JSON.stringify(line)}\n`);
-    })
-  })
-  .catch((error) => console.log(error));
+const converter = new Converter();
+
+const readStream = fs.createReadStream('./csv/file.csv');
+const writeStream = fs.createWriteStream('./file.txt');
+
+readStream.pipe(converter).pipe(writeStream);
+
+readStream.on('error', function(error) {
+  console.log(error);
+});
+
+writeStream.on('error', function(error) {
+  console.log(error);
+});

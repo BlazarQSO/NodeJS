@@ -1,4 +1,4 @@
-const { EventEmitter } = require('./task1');
+const { EventEmitter } = require('./eventEmitter');
 
 class WithTime extends EventEmitter {
   async execute(asyncFunc, ...args) {
