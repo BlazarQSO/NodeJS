@@ -1,3 +1,4 @@
+import MockData from 'mockdate';
 import { validateCountry, validateYear, validateInput, shortenPublicHoliday } from '../helpers';
 import { PublicHoliday } from '../types';
 
@@ -10,7 +11,9 @@ describe('testing helpers', () => {
   });
 
   it('should enter valid year (validateYear)', () => {
+    MockData.set('9/9/2023');
     expect(validateYear(2023)).toBeTruthy();
+    MockData.reset();
   });
   it('should enter invalid country (validateYear)', () => {
     expect(validateYear(9999)).toBeFalsy();

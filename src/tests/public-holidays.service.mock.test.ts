@@ -1,4 +1,5 @@
 import axios from 'axios';
+import MockAdapter from 'axios-mock-adapter';
 import {
   getListOfPublicHolidays,
   checkIfTodayIsPublicHoliday,
@@ -9,10 +10,23 @@ import { PublicHolidayStatus } from '../helpers';
 
 
 describe('testing services by mock', () => {
+  let mock: MockAdapter;
+
+  beforeAll(() => {
+    mock = new MockAdapter(axios);
+  });
+
+  afterEach(() => {
+    mock.reset();
+  });
+
+  const url_2023GB = 'https://date.nager.at/api/v3/PublicHolidays/2023/GB';
+
   it('should return public holidays list (getListOfPublicHolidays)', async () => {
-    jest.spyOn(axios, 'get').mockImplementation(() => Promise.resolve({ data: holidaysList2023 }));
+    mock.onGet(url_2023GB).reply(200, holidaysList2023);
 
     const response = await getListOfPublicHolidays(2023, 'GB');
+
     expect(response).toEqual(holidaysList2023);
   });
   it('should call API with proper arguments (getListOfPublicHolidays)', async () => {
@@ -22,7 +36,7 @@ describe('testing services by mock', () => {
 
     await getListOfPublicHolidays(2023, 'GB');
 
-    expect(axiosGetSpy).toHaveBeenCalledWith(`https://date.nager.at/api/v3/PublicHolidays/2023/GB`);
+    expect(axiosGetSpy).toHaveBeenCalledWith(url_2023GB);
   });
   it('should return empty array if year or country are invalid (getListOfPublicHolidays)', async () => {
     jest.spyOn(axios, 'get').mockImplementation(() => Promise.reject({ data: holidaysList2023 }));

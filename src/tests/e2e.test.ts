@@ -8,6 +8,11 @@ describe('Public holidays API', () => {
 
       expect(status).toEqual(200);
       expect(body.length).toBeGreaterThan(0);
+      expect(body).toEqual(expect.arrayContaining([
+        expect.objectContaining({
+          date: expect.any(String),
+        }),
+       ]));
     });
   });
 
@@ -17,6 +22,11 @@ describe('Public holidays API', () => {
 
       expect(status).toEqual(200);
       expect(body.length).toBeGreaterThan(0);
+      expect(body).toEqual(expect.arrayContaining([
+        expect.objectContaining({
+          date: expect.any(String),
+        }),
+       ]));
     });
   });
 });
