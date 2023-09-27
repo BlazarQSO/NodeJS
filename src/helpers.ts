@@ -1,0 +1,33 @@
+import { SUPPORTED_COUNTRIES } from './config';
+import { PublicHoliday, PublicHolidayShort } from './types';
+
+export const validateCountry = (country: string): boolean => {
+  return SUPPORTED_COUNTRIES.includes(country);
+};
+
+export const validateYear = (year: number): boolean => {
+  return year === new Date().getFullYear();
+};
+
+export const validateInput = ({ year, country }: { year?: number; country?: string }): boolean => {
+  if (country && !validateCountry(country)) {
+    throw new Error(`Country provided is not supported, received: ${country}`);
+  }
+
+  if (year && !validateYear(year)) {
+    throw new Error(`Year provided not the current, received: ${year}`);
+  }
+
+  return true;
+};
+
+export const shortenPublicHoliday = ({ name, localName, date }: PublicHoliday): PublicHolidayShort => ({
+  name,
+  localName,
+  date,
+});
+
+export enum PublicHolidayStatus {
+  TODAY_IS_A_PUBLIC_HOLIDAY = 200,
+  TODAY_IS_NOT_A_PUBLIC_HOLIDAY = 204,
+}
