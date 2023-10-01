@@ -12,7 +12,6 @@ class Database {
 
   getUser(userId) {
     const user = this.findUser(userId);
-    console.log('user', user);
 
     if (user) {
       return { name: user.name, email: user.email };

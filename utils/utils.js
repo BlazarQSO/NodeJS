@@ -9,7 +9,7 @@ const getHtmlBlock = ({ message, name, email, hobbies }) => `
   <div>${message} ${name}:</div>
   <div style="border: 1px solid gold">
     ${!!name ? `<div>name: ${name}</div>` : ''}
-    ${email ? `<div>email: ${email}</div>` : ''}
+    ${!!email ? `<div>email: ${email}</div>` : ''}
     ${!!hobbies ? `<div>hobbies: ${hobbies}</div>`: ''}
   </div>
 </div>`;

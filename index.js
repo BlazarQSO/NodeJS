@@ -110,11 +110,11 @@ const server = http.createServer((request, response) => {
       }
       response.statusCode = 200;
       response.setHeader('Content-Type', 'text/html');
-      response.end(response.end(getHtmlBlock({
+      response.end(getHtmlBlock({
         message: 'Hobbies User',
         name: user.name,
         hobbies: user.hobbies,
-      })));
+      }));
       break;
     }
     case `/users/hobbies/delete`: {
@@ -125,11 +125,11 @@ const server = http.createServer((request, response) => {
       }
       response.statusCode = 200;
       response.setHeader('Content-Type', 'text/html');
-      response.end(response.end(getHtmlBlock({
+      response.end(getHtmlBlock({
         message: 'Hobbies User',
         name: user.name,
         hobbies: user.hobbies,
-      })));
+      }));
       break;
     }
     default: {
