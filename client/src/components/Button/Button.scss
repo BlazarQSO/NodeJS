@@ -1,0 +1,28 @@
+@import '../../styles/styles.scss';
+
+.button {
+  @include label;
+  color: #4d4d4d;
+  background-color: #cccccc;
+  padding: 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  border: 1px solid darkgoldenrod;
+  min-width: 150px;
+
+  &:active {
+    background-color: #e7e5e5;
+  }
+
+  svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  &__with-icon {
+    display: flex;
+    background: whitesmoke;
+    min-height: 0;
+    min-width: 0;
+  }
+}
