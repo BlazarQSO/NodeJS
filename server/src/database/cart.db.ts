@@ -1,35 +1,35 @@
 import { UUID } from 'crypto';
 import { updateEntity, delayDb } from '../utils';
 import { defaultCartDb } from '../constants';
-import { Cart } from '../resources/cart/cart.model';
+import { CartEntity } from '../resources/cart/cart.interfaces';
 
 class CartDB {
-  carts: Cart[]
+  carts: CartEntity[]
 
-  constructor(carts: Cart[] = defaultCartDb) {
+  constructor(carts: CartEntity[] = defaultCartDb) {
     this.carts = carts;
   }
 
-  async getCart(currentUserId: UUID): Promise<Cart | undefined> {
+  async getCart(currentUserId: UUID): Promise<CartEntity | undefined> {
     await delayDb();
 
     return this.findCart(currentUserId);
   }
 
-  async getCarts(): Promise<Cart[]> {
+  async getCarts(): Promise<CartEntity[]> {
     await delayDb();
 
     return this.carts;
   }
 
-  async createCart(cart: Cart): Promise<Cart> {
+  async createCart(cart: CartEntity): Promise<CartEntity> {
     await delayDb();
 
     this.carts.push(cart);
     return cart;
   }
 
-  async updateCart(cart: Cart): Promise<Cart | undefined> {
+  async updateCart(cart: CartEntity): Promise<CartEntity | undefined> {
     await delayDb();
 
     const updatedCart = this.findCart(cart.userId);
@@ -45,7 +45,7 @@ class CartDB {
     this.carts = this.carts.filter(({ userId }) => userId !== currentUserId);
   }
 
-  findCart(currentUserId: UUID): Cart | undefined {
+  findCart(currentUserId: UUID): CartEntity | undefined {
     return this.carts.find(({ userId }) => userId === currentUserId);
   }
 }

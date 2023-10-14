@@ -13,7 +13,7 @@ class UserDB {
   async getUser(userId: UUID): Promise<User | undefined> {
     await delayDb();
 
-    return await this.findUser(userId);
+    return await this.findUser(userId);;
   }
 
   async getUsers(): Promise<User[]> {
@@ -53,12 +53,16 @@ class UserDB {
 
   async findUserByEmail(emailUser: string): Promise<User | undefined> {
     await delayDb();
+    console.log('findUserByEmail', emailUser);
+    console.log('findUserByEmail this.users', this.users);
 
     return this.users.find(({ email }) => email === emailUser);
   }
 
   async findUserByLogin(loginUser: string): Promise<User | undefined> {
     await delayDb();
+    console.log('findUserByEmail', loginUser);
+    console.log('findUserByEmail this.users', this.users);
 
     return this.users.find(({ login }) => login === loginUser);
   }

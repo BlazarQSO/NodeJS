@@ -9,6 +9,7 @@ export interface OrderEntity {
   comments: string;
   status: OrderStatus;
   total: number;
+  date: Date;
 }
 
 export type Delivery = {

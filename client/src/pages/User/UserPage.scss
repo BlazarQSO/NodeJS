@@ -1,0 +1,22 @@
+@import '../../styles/styles.scss';
+
+.user-page {
+  width: 50%;
+  height: calc(100vh - 305px);
+
+  &__description {
+    @include title-1;
+  }
+
+  &__control {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    height: calc(100vh - 300px);
+  }
+}

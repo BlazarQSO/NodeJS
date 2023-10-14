@@ -27,6 +27,6 @@ export const updateOrder = async (order: Order): Promise<Order | undefined> => {
   return updatedOrder;
 }
 
-export const deleteOrder = async (id: UUID, userId: UUID): Promise<void> => {
-  await orderDb.deleteOrder(id, userId);
+export const deleteOrder = async (id: UUID): Promise<void> => {
+  await orderDb.deleteOrder(id);
 };

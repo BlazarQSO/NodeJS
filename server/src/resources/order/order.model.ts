@@ -10,8 +10,9 @@ export class Order implements OrderEntity {
   comments: string;
   status: OrderStatus;
   total: number;
+  date: Date;
 
-  constructor({ userId, cartId, paymentType, delivery, comments,status, total }: OrderEntity) {
+  constructor({ userId, cartId, paymentType, delivery, comments, status, total, date }: OrderEntity) {
     this.id = randomUUID();
     this.userId = userId;
     this.cartId = cartId;
@@ -20,5 +21,6 @@ export class Order implements OrderEntity {
     this.comments = comments;
     this.status = status;
     this.total = total;
+    this.date = date;
   }
 }

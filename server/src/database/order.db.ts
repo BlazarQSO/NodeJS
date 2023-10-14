@@ -48,10 +48,10 @@ class OrderDB {
     }
   }
 
-  async deleteOrder(orderId: UUID, currentUserId: UUID): Promise<void> {
+  async deleteOrder(orderId: UUID): Promise<void> {
     await delayDb();
 
-    this.orders = this.orders.filter(({ id, userId }) => !(id === orderId && userId === currentUserId));
+    this.orders = this.orders.filter(({ id }) => !(id === orderId));
   }
 
   findOrder(orderId: UUID): Order | undefined {

@@ -8,10 +8,16 @@ export interface CartItemEntity {
 
 export interface ICart {
   userId: UUID;
-  isDeleted?: boolean;
   items?: CartItemEntity[];
 }
 
 export interface CartEntity extends ICart {
   id: UUID;
+}
+
+export enum ActionUpdateCart {
+  ADD_ITEM = 'add_item',
+  RESET_CART = 'reset_cart',
+  DELETE_ITEM = 'delete_item',
+  UPDATE_ITEM = 'update_item',
 }

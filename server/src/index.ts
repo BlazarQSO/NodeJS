@@ -10,12 +10,14 @@ import { productRouter } from './resources/product/product.controller';
 import { orderRouter } from './resources/order/order.controller';
 import { ValidationError } from 'express-validation';
 import { routerAuth } from './auth/auth.routes';
+import cors from 'cors';
 import 'dotenv/config';
 
 const port = process.env.PORT || PORT;
 const app = express();
 const swaggerDocument = YAML.load(path.join(__dirname, '../doc/api.yaml'));
 
+app.use(cors());
 app.use(express.json());
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 

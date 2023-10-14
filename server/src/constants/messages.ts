@@ -6,4 +6,5 @@ export const messages = {
   userIsNotFound: 'User is not found',
   incorrectPassword: 'Incorrect password',
   notAuthorized: 'Not authorized',
+  cartIsNotFound: 'Cart is not found',
 };

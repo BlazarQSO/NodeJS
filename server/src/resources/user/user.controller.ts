@@ -7,6 +7,7 @@ import { createCart } from '../cart/cart.repository';
 import { Cart } from '../cart/cart.model';
 import { auth } from '../../middleware/auth.middleware';
 import { CustomRequest } from '../../types/declaration';
+import { deleteCart } from '../cart/cart.service';
 
 const userRouter = express.Router();
 
@@ -16,25 +17,34 @@ userRouter.get('/', async (_, res): Promise<void> => {
   res.status(StatusCode.OK).send(users);
 });
 
-userRouter.get('/', auth, async (req: CustomRequest, res): Promise<void> => {
-  const user = await userService.getUser(req?.userAuth as UUID);
-  res.status(StatusCode.OK).send(user);
+// auth admin role
+userRouter.get('/:id', async (req: CustomRequest, res): Promise<void> => {
+  const user = await userService.getUser(req.params.id as UUID);
+  // const user = await userService.getUser(req?.userAuth as UUID);
+  if (user) {
+    res.status(StatusCode.OK).send(user);
+  } else {
+    res.status(StatusCode.NOT_FOUND);
+  }
 });
 
-// user is created during register
-// userRouter.post('/', async (req, res): Promise<void> => {
-//   const user = await userService.createUser(req.body);
-//   await createCart(new Cart({ userId: user.id }));
-//   res.status(StatusCode.CREATED).send(user);
-// });
+userRouter.post('/', async (req, res): Promise<void> => {
+  const user = await userService.createUser(req.body);
+  await createCart(new Cart({ userId: user.id }));
+  res.status(StatusCode.CREATED).send(user);
+});
 
-userRouter.put('/update', auth, async (req: CustomRequest, res): Promise<void> => {
-  const user = await userService.updateUser({ id: req.userAuth as UUID, ...<IUser>req.body});
+// auth
+userRouter.put('/', async (req: CustomRequest, res): Promise<void> => {
+  // const user = await userService.updateUser({ id: req.userAuth as UUID, ...<IUser>req.body});
+  const user = await userService.updateUser(req.body);
   res.status(StatusCode.OK).send(user);
 });
 
 userRouter.delete('/', async (req: CustomRequest, res): Promise<void> => {
-  await userService.deleteUser(req.userAuth as UUID);
+  await userService.deleteUser(req.body.id);
+  await deleteCart(req.body.id);
+  // await userService.deleteUser(req.userAuth as UUID);
   res.sendStatus(StatusCode.NO_CONTENT);
 });
 

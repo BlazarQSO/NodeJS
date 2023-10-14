@@ -12,4 +12,4 @@ export const createOrder = (order: Order): Promise<Order> => orderRepository.cre
 
 export const updateOrder = (order: Order): Promise<Order | undefined> => orderRepository.updateOrder(order);
 
-export const deleteOrder = (id: UUID, userId: UUID): Promise<void> => orderRepository.deleteOrder(id, userId);
+export const deleteOrder = (id: UUID): Promise<void> => orderRepository.deleteOrder(id);
