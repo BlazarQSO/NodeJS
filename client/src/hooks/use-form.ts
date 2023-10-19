@@ -8,7 +8,6 @@ export const useForm = <T>(defaultState: T): [
   const [form, setForm] = useState(defaultState);
 
   const changeHandler = (event: ChangeEvent<HTMLInputElement>): void => {
-    console.log('form: ', { ...form, [event.target.name]: event.target.value });
     setForm({ ...form, [event.target.name]: event.target.value });
   };
 

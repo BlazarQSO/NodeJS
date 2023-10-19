@@ -16,13 +16,12 @@ export const Login: FC = (): JSX.Element => {
   const onLogin = async (): Promise<void> => {
     const response = await request(`${BASE_URL}/auth/login`, HttpMethods.POST, form);
     // add to context
-    console.log('response', response);
+
     login(response.token, response.user.id, response.user.login);
     history.push('/products');
   };
 
   const onRegister = () => {
-    console.log('register');
     history.push('/register');
   };
 

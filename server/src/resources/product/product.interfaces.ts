@@ -1,11 +1,10 @@
-import { UUID } from 'crypto';
-
-export interface ProductEntity {
-  id: UUID;
+export interface IProduct {
   title: string;
   description: string;
   price: number;
   img: string;
 }
 
-export type RequestProductBody = Omit<ProductEntity, 'id'>;
+export interface ProductEntity extends IProduct {
+  id: number;
+}

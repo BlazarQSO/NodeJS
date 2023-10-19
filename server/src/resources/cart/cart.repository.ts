@@ -1,27 +1,60 @@
-import { UUID } from 'crypto';
-import { cartDb } from '../../database';
-import { CartEntity } from './cart.interfaces';
+import { CartEntity, ICart } from './cart.interfaces';
+import { defaultCartDb } from '../../constants';
+import { CartDb } from '../../database/models.db';
 
-export const getCarts = async (): Promise<CartEntity[]> => {
-  const carts = await cartDb.getCarts();
-  return carts;
-};
+class CartRepository {
+  constructor() {
+    const addDefaultUsers = async () => {
+      setTimeout(() => {
+        Promise.all(defaultCartDb.map(async ({ userId, isDeleted }) => {
+          const found = await CartDb.findOne({
+            where: {
+              id: userId,
+            },
+          });
+          !found && await CartDb.create({ userId, isDeleted });
+        }));
+      }, 3000);
+    }
 
-export const getCart = async (userId: UUID): Promise<CartEntity | undefined> => {
-  const cart = await cartDb.getCart(userId);
-  return cart;
-};
+    addDefaultUsers();
+  }
 
-export const createCart = async (cart: CartEntity): Promise<CartEntity> => {
-  const carts = await cartDb.createCart(cart);
-  return carts;
-};
+  getCarts = async (): Promise<CartEntity[]> => {
+    const carts = await CartDb.findAll() as unknown as CartEntity[];
 
-export const updateCart = async (cart: CartEntity): Promise<CartEntity | undefined> => {
-  const updatedCart = await cartDb.updateCart(cart);
-  return updatedCart;
+    return carts;
+  }
+
+  getCart = async (userId: number): Promise<CartEntity | undefined> => {
+    const cart = await CartDb.findOne({
+      where: { userId },
+    }) as unknown as CartEntity;
+
+    return cart;
+  }
+
+  createCart = async (cart: ICart): Promise<CartEntity> => {
+    const newCart = await CartDb.create({ ...cart }) as unknown as CartEntity;
+
+    return newCart;
+  }
+
+  updateCart = async (cart: CartEntity): Promise<CartEntity | undefined> => {
+    const updatedCart = await CartDb.update(cart, {
+      where: { id: cart.id },
+    }) as unknown as CartEntity;
+
+    return updatedCart;
+  }
+
+  deleteCart = async (id: number): Promise<boolean> => {
+    const rowDeleted = await CartDb.destroy({
+      where: { id },
+    });
+
+    return rowDeleted === 1;
+  }
 }
 
-export const deleteCart = async (userId: UUID): Promise<void> => {
-  await cartDb.deleteCart(userId);
-};
+export const cartRepository = new CartRepository();

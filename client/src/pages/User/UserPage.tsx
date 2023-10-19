@@ -6,21 +6,20 @@ import { ModalWindow } from '../../components/ModalWindow/ModalWindow';
 import { InputValues } from '../../components/InputText/InputText.types';
 import CloseIcon from '../../assets/icons/Close.svg';
 import { BASE_URL, HttpMethods } from '../../constants';
-import './UserPage.scss';
 import { Loading } from '../../components/Loading/Loading';
 import { useHistory } from 'react-router-dom';
 import { Context } from '../../context/context';
-import { STORAGE_NAME } from '../../constants/storage';
+import './UserPage.scss';
 
 export const UserPage: FC = (): JSX.Element => {
   const history = useHistory();
-  const storage = JSON.parse(localStorage.getItem(STORAGE_NAME));
-  const userId = storage?.userId;
+  const { userId } = useContext(Context);
   const { loading, request } = useHttp(true);
   const [user, onDependenciesUpdate] = useGetData<UserEntity>({
     request,
     url: `${BASE_URL}/user/${userId}`,
     method: HttpMethods.GET,
+    dependencies: userId,
   });
 
   const [form, changeHandler, setForm] = useForm(null);

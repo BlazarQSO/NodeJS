@@ -5,6 +5,7 @@ import { HttpMethods, Separators, StatusCode, messages } from '../constants';
 import { CustomRequest } from '../types/declaration';
 import { UUID } from 'crypto';
 import 'dotenv/config';
+import { JWT_SECRET } from '../public.env';
 
 const authorizationCallBack = async (
   req: CustomRequest,
@@ -22,7 +23,7 @@ const authorizationCallBack = async (
     return res.status(StatusCode.UNAUTHORIZED).json({ message: messages.notAuthorized });
   }
 
-  const decodedToken = jwt.verify(token, process.env.JWT_SECRET as string);
+  const decodedToken = jwt.verify(token, JWT_SECRET);
   req.userAuth = decodedToken as UUID;
   next?.();
 }

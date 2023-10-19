@@ -8,6 +8,7 @@ interface UseGetData <T> {
   defaultValue?: T;
   body?: Record<string, string>;
   headers?: HeadersInit;
+  dependencies?: string;
 }
 
 export const useGetData = <T>({
@@ -17,21 +18,20 @@ export const useGetData = <T>({
   body,
   headers,
   defaultValue,
+  dependencies,
 }: UseGetData<T>): [T, () => void] => {
   const [dependenciesUpdate, setDependenciesUpdate] = useState(false);
   const [data, setData] = useState<T>(defaultValue);
 
   useEffect(() => {
     const getData = async () => {
-      setTimeout(async () => {
-        const responseData = await request(url, method, body, headers);
+      const responseData = await request(url, method, body, headers);
 
-        setData(responseData);
-      }, 1000);
+      setData(responseData);
     };
 
     getData();
-  }, [dependenciesUpdate]);
+  }, [dependenciesUpdate, dependencies]);
 
   const onDependenciesUpdate = () => {
     setDependenciesUpdate((prev) => !prev);

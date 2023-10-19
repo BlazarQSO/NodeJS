@@ -3,12 +3,13 @@ import { BrowserRouter } from 'react-router-dom';
 import { useRoutes } from './routes/routes';
 import { Header } from './layouts/Header/Header';
 import { Footer } from './layouts/Footer/Footer';
-import { useAuth } from './hooks';
+import { useAuth, useProductCount } from './hooks';
 import { Context } from './context/context';
 import './App.scss';
 
 export const App: React.FC = () => {
   const { login, logout, token, userId, userLogin, ready } = useAuth();
+  const [productCount, productCountHandler] = useProductCount(userId);
   const isAuthenticated = !!token;
   const routes = useRoutes();
 
@@ -23,6 +24,8 @@ export const App: React.FC = () => {
       ready,
       cart: null,
       user: null,
+      productCount,
+      productCountHandler,
     }}
     >
       <BrowserRouter>

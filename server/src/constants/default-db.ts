@@ -1,51 +1,53 @@
-import { UUID, randomUUID } from 'crypto';
 import { defaultProducts } from './default-products';
 import { getArray, getRandomIntInclusive } from '../utils';
-import { User } from '../resources/user/user.model';
-import { Product } from '../resources/product/product.model';
-import { Cart } from '../resources/cart/cart.model';
-import { Order } from '../resources/order/order.model';
-import { CartItemEntity } from '../resources/cart/cart.interfaces';
-import { OrderStatus, PaymentType, DeliveryType } from '../resources/order/order.interfaces';
+import { CartEntity } from '../resources/cart/cart.interfaces';
+import { OrderStatus, PaymentType, DeliveryType, OrderEntity } from '../resources/order/order.interfaces';
+import { UserEntity } from '../resources/user/user.interfaces';
+import { ProductEntity } from '../resources/product/product.interfaces';
+import { CartItemEntity } from '../resources/cart-item/cart-item.interfaces';
 
 const DEFAULT_COUNT_OBJECTS = 5;
 
-export const defaultUserDb = getArray<User>(DEFAULT_COUNT_OBJECTS, (_, index) => ({
-  id: `${index + 1}61989048-5cd7-42c6-a508-d422c26a6693`,
+export const defaultUserDb = getArray<UserEntity>(DEFAULT_COUNT_OBJECTS, (_, index) => ({
+  id: index + 1,
   login: `name${index + 1}`,
   email: `name${index + 1}@mail.com`,
   password: `password${index + 1}`,
 }));
 
-export const defaultProductDb = getArray<Product>(DEFAULT_COUNT_OBJECTS, (_, index) => ({
-  id: randomUUID(),
+export const defaultProductDb = getArray<ProductEntity>(DEFAULT_COUNT_OBJECTS, (_, index) => ({
+  id: index + 1,
   title: defaultProducts[index].title,
   description: defaultProducts[index].description,
   price: defaultProducts[index].price,
   img: defaultProducts[index].img,
 }));
 
-export const defaultCartDb = getArray<Cart>(DEFAULT_COUNT_OBJECTS, (_, index) => ({
-  id: randomUUID(),
+export const defaultCartDb = getArray<CartEntity>(DEFAULT_COUNT_OBJECTS, (_, index) => ({
+  id: index + 1,
   userId: defaultUserDb[index].id,
   isDeleted: false,
-  items: getArray<CartItemEntity>(getRandomIntInclusive(1, 3), (_, index) => ({
-    product: { ...defaultProductDb[index] },
-    count: getRandomIntInclusive(1, 3),
-  })),
 }));
 
-export const defaultOrderDb = getArray<Order>(DEFAULT_COUNT_OBJECTS, (_, index) => ({
-  id: randomUUID(),
+export const defaultCartItemDb = getArray<CartItemEntity>(DEFAULT_COUNT_OBJECTS, (_, index) => ({
+  id: index + 1,
+  cartId: defaultCartDb[index].id,
+  productId: defaultProductDb[index].id,
+  title: defaultProductDb[index].title,
+  description: defaultProductDb[index].description,
+  price: defaultProductDb[index].price,
+  count: getRandomIntInclusive(1, 3),
+}));
+
+export const defaultOrderDb = getArray<OrderEntity>(DEFAULT_COUNT_OBJECTS, (_, index) => ({
+  id: index + 1,
   userId: defaultUserDb[index].id,
   cartId: defaultCartDb[index].id,
-  paymentType: PaymentType.CASH,
-  delivery: {
-    deliveryType: DeliveryType.POST,
-    address: `address: Delivery street ${index}`,
-  },
+  paymentType: getRandomIntInclusive(1, 3) % 2 === 0 ? PaymentType.CASH : PaymentType.CREDIT_CARD,
+  deliveryType: getRandomIntInclusive(1, 3) % 2 === 0 ? DeliveryType.POST : DeliveryType.COURIER,
+  address: `address: Delivery street ${index + 1}`,
   comments: 'urgent delivery',
   date: new Date(),
-  status: OrderStatus.COMPLETED,
-  total: defaultCartDb[index].items.reduce((sum, { product, count }: CartItemEntity) => sum + product.price * count, 0),
-} as Order));
+  status: getRandomIntInclusive(1, 3) % 2 === 0 ? OrderStatus.CREATED : OrderStatus.COMPLETED,
+  total: defaultCartItemDb[index].price * defaultCartItemDb[index].count,
+}));

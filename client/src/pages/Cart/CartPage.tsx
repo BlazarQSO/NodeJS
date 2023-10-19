@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FC, useMemo, useState } from 'react';
+import React, { ChangeEvent, FC, useContext, useMemo, useState } from 'react';
 import { useHistory, Link } from 'react-router-dom';
 import { data } from '../Products/ProductsPage';
 import { Button } from '../../components/Button/Button';
@@ -10,19 +10,19 @@ import './CartPage.scss';
 import { useForm, useGetData, useHttp } from '../../hooks';
 import { BASE_URL, HttpMethods } from '../../constants';
 import { Loading } from '../../components/Loading/Loading';
-import { STORAGE_NAME } from '../../constants/storage';
+import { Context } from '../../context/context';
 
 export const CartPage: FC = (): JSX.Element => {
   const history = useHistory();
   const { loading, request } = useHttp(true);
-  const storage = JSON.parse(localStorage.getItem(STORAGE_NAME));
-  const userId = storage?.userId;
+  const { productCountHandler, userId } = useContext(Context);
 
-  const [cart] = useGetData<CartEntity>({
+  const [cart, onDependenciesUpdate] = useGetData<CartEntity>({
     request,
     url: `${BASE_URL}/user/cart`,
     method: HttpMethods.POST,
     body: { userId },
+    dependencies: userId,
   });
 
   const [isCreateNewOrder, setIsCreateNewOrder] = useState(false);
@@ -72,10 +72,19 @@ export const CartPage: FC = (): JSX.Element => {
       setIsCreateNewOrder(true);
       request(`${BASE_URL}/user/cart`, HttpMethods.PUT, { userId, action: ActionUpdateCart.RESET_CART });
     }
+    productCountHandler();
   };
 
-  const onClearCart = () => {
-    request(`${BASE_URL}/user/cart`, HttpMethods.PUT, { userId, action: ActionUpdateCart.RESET_CART });
+  const onClearCart = async () => {
+    await request(
+      `${BASE_URL}/user/cart`,
+      HttpMethods.PUT,
+      { userId, action: ActionUpdateCart.RESET_CART },
+      {},
+      false,
+    );
+    productCountHandler();
+    onDependenciesUpdate();
   };
 
   return (
@@ -100,7 +109,12 @@ export const CartPage: FC = (): JSX.Element => {
                     {
                       cart?.items?.length > 0
                         ? cart.items.map(({ product, count }) => (
-                          <CartItem product={product} count={count} key={product.id} />
+                          <CartItem
+                            key={product.id}
+                            product={product}
+                            count={count}
+                            onDependenciesUpdate={onDependenciesUpdate}
+                          />
                         ))
                         : <div className="cart-page__cart-empty">Cart is Empty</div>
                     }

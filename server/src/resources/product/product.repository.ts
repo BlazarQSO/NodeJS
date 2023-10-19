@@ -1,27 +1,69 @@
-import { UUID } from 'crypto';
-import { productDb } from '../../database';
-import { Product } from './product.model';
+import { defaultProductDb } from '../../constants';
+import { ProductDb } from '../../database/models.db';
+import { IProduct, ProductEntity } from './product.interfaces';
 
-export const getProducts = async (): Promise<Product[]> => {
-  const users = await productDb.getProducts();
-  return users;
-};
+class ProductRepository {
+  constructor() {
+    const addDefaultProducts = async () => {
+      setTimeout(() => {
+        Promise.all(defaultProductDb.map(async ({ title, price, description }) => {
+          const found = await ProductDb.findOne({
+            where: {
+              title,
+            },
+          });
+          !found && await ProductDb.create({ title, price, description });
+        }));
+      }, 5000);
+    }
+    addDefaultProducts();
+  }
 
-export const getProduct = async (id: UUID): Promise<Product | undefined> => {
-  const product = await productDb.getProduct(id);
-  return product;
-};
+  getProducts = async (): Promise<ProductEntity[]> => {
+    const products = await ProductDb.findAll() as unknown as ProductEntity[];
+    return products;
+  }
 
-export const createProduct = async (product: Product): Promise<Product> => {
-  const users = await productDb.createProduct(product);
-  return users;
-};
+  getProduct = async (id: number): Promise<ProductEntity | undefined> => {
+    const product = await ProductDb.findOne({
+      where: { id },
+    }) as unknown as ProductEntity;
 
-export const updateProduct = async (product: Product): Promise<Product | undefined> => {
-  const updatedProduct = await productDb.updateProduct(product);
-  return updatedProduct;
+    return product;
+  }
+
+  createProduct = async (product: IProduct): Promise<ProductEntity> => {
+    const { title, price, description, img } = product;
+
+    let fileName;
+
+    // if (img) {
+    //   const fileName = randomUUID() + '.jpg';
+    //   img.mv(path.relative(__dirname, '..', 'assets', fileName));
+    // }
+
+    const newProduct = await ProductDb.create(
+      { title, price, description, img: fileName }
+    ) as unknown as ProductEntity;
+
+    return newProduct;
+  }
+
+  updateProduct = async (product: ProductEntity): Promise<ProductEntity> => {
+    const updatedProduct = await ProductDb.update(product, {
+      where: { id: product.id },
+    }) as unknown as ProductEntity;
+
+    return updatedProduct;
+  }
+
+  deleteProduct = async (id: number): Promise<boolean> => {
+    const rowDeleted = await ProductDb.destroy({
+      where: { id }
+    });
+
+    return rowDeleted === 1;
+  }
 }
 
-export const deleteProduct = async (id: UUID): Promise<void> => {
-  await productDb.deleteProduct(id);
-};
+export const productRepository = new ProductRepository();

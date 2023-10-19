@@ -1,5 +1,3 @@
-import { UUID } from 'crypto';
-
 export interface IUser {
   login: string;
   email: string;
@@ -7,5 +5,5 @@ export interface IUser {
 }
 
 export interface UserEntity extends IUser {
-  id: UUID;
+  id: number;
 }

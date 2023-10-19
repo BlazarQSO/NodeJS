@@ -1,27 +1,67 @@
-import { UUID } from 'crypto';
-import { userDb } from '../../database';
-import { User } from './user.model';
+import bcrypt from 'bcryptjs';
+import { UserDb } from '../../database/models.db';
+import { defaultUserDb } from '../../constants';
+import { IUser, UserEntity } from './user.interfaces';
+import { SALT } from '../../public.env';
 
-export const getUsers = async (): Promise<User[]> => {
-  const users = await userDb.getUsers();
-  return users;
-};
+class UserRepository {
+  constructor() {
+    const addDefaultUsers = async () => {
+      setTimeout(() => {
+        Promise.all(defaultUserDb.map(async ({ email, login, password }) => {
+          const hashedPassword = await bcrypt.hash(password, SALT);
+          const found = await UserDb.findOne({
+            where: {
+              email,
+            },
+          });
+          !found && await UserDb.create({ email, login, password: hashedPassword });
+        }));
+      }, 4000);
+    }
 
-export const getUser = async (id: UUID): Promise<User | undefined> => {
-  const user = await userDb.getUser(id);
-  return user;
-};
+    addDefaultUsers();
+  }
 
-export const createUser = async (user: User): Promise<User> => {
-  const users = await userDb.createUser(user);
-  return users;
-};
+  getUsers = async (): Promise<UserEntity[]> => {
+    const users = await UserDb.findAll() as unknown as UserEntity[];
 
-export const updateUser = async (user: User): Promise<User | undefined> => {
-  const updatedUser = await userDb.updateUser(user);
-  return updatedUser;
+    return users;
+  }
+
+  getUser = async (id: number): Promise<UserEntity | undefined> => {
+    const user = await UserDb.findOne({
+      where: { id },
+    }) as unknown as UserEntity;
+
+    return user;
+  }
+
+  createUser = async (user: IUser): Promise<UserEntity> => {
+    const { login, email, password } = user;
+
+    const users = await UserDb.create(
+      { login, email, password }
+    ) as unknown as UserEntity;
+
+    return users;
+  }
+
+  updateUser = async (user: UserEntity): Promise<UserEntity | undefined> => {
+    const updatedUser = await UserDb.update(user, {
+      where: { id: user.id },
+    }) as unknown as UserEntity;
+
+    return updatedUser;
+  }
+
+  deleteUser = async (id: number): Promise<boolean>  => {
+    const rowDeleted = await UserDb.destroy({
+        where: { id },
+      });
+
+    return rowDeleted === 1;
+  }
 }
 
-export const deleteUser = async (id: UUID): Promise<void>  => {
-  await userDb.deleteUser(id);
-};
+export const userRepository = new UserRepository();

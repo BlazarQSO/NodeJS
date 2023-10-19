@@ -1,17 +1,16 @@
-import * as productRepository from './product.repository';
-import { Product } from './product.model';
-import { UUID } from 'crypto';
+import { productRepository } from './product.repository';
+import { IProduct, ProductEntity } from './product.interfaces';
 
-export const getProducts = (): Promise<Product[]> => productRepository.getProducts();
+export const getProducts = (): Promise<ProductEntity[]> => productRepository.getProducts();
 
-export const getProduct = (id: UUID): Promise<Product | undefined> => productRepository.getProduct(id);
+export const getProduct = (id: number): Promise<ProductEntity | undefined> => productRepository.getProduct(id);
 
-export const createProduct = (
-  product: Product,
-): Promise<Product> => productRepository.createProduct(new Product(product));
+export const createProduct = (product: IProduct): Promise<ProductEntity> => {
+  return productRepository.createProduct(product);
+}
 
 export const updateProduct = (
-  product: Product,
-): Promise<Product | undefined> => productRepository.updateProduct(product);
+  product: ProductEntity,
+): Promise<ProductEntity | undefined> => productRepository.updateProduct(product);
 
-export const deleteProduct = (id: UUID): Promise<void> => productRepository.deleteProduct(id);
+export const deleteProduct = (id: number): Promise<boolean> => productRepository.deleteProduct(id);

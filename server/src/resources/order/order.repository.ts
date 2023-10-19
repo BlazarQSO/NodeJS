@@ -1,32 +1,68 @@
-import { UUID } from 'crypto';
-import { orderDb } from '../../database';
-import { Order } from './order.model';
+import { OrderDb } from '../../database/models.db';
+import { defaultOrderDb } from '../../constants';
+import { IOrder, OrderEntity } from './order.interfaces';
 
-export const getOrders = async (): Promise<Order[]> => {
-  const orders = await orderDb.getOrders();
-  return orders;
-};
+class OrderRepository {
+  constructor() {
+    const addDefaultUsers = async () => {
+      setTimeout(() => {
+        Promise.all(defaultOrderDb.map(async (order) => {
+          const found = await OrderDb.findOne({
+            where: {
+              id: order.id,
+            },
+          });
+          !found && await OrderDb.create({ ...order });
+        }));
+      }, 3000);
+    }
 
-export const getOrder = async (id: UUID, userId: UUID): Promise<Order | undefined> => {
-  const order = await orderDb.getOrder(id, userId);
-  return order;
-};
+    addDefaultUsers();
+  }
 
-export const getUserOrders = async (userId: UUID): Promise<Order[]> => {
-  const orders = await orderDb.getUserOrders(userId);
-  return orders;
-};
+  getOrders = async (): Promise<OrderEntity[]> => {
+    const orders = await OrderDb.findAll() as unknown as OrderEntity[];
 
-export const createOrder = async (order: Order): Promise<Order> => {
-  const orders = await orderDb.createOrder(order);
-  return orders;
-};
+    return orders;
+  }
 
-export const updateOrder = async (order: Order): Promise<Order | undefined> => {
-  const updatedOrder = await orderDb.updateOrder(order);
-  return updatedOrder;
+  getOrder = async (id: number): Promise<OrderEntity | undefined> => {
+    const order = await OrderDb.findOne({
+      where: { id },
+    }) as unknown as OrderEntity;
+
+    return order;
+  }
+
+  getUserOrders = async (userId: number): Promise<OrderEntity[]> => {
+    const orders = await OrderDb.findAll({
+      where: { userId }
+    }) as unknown as OrderEntity[];
+
+    return orders;
+  }
+
+  createOrder = async (order: IOrder): Promise<OrderEntity> => {
+    const orders = await OrderDb.create({ ...order }) as unknown as OrderEntity;
+
+    return orders;
+  }
+
+  updateOrder = async (order: OrderEntity): Promise<OrderEntity | undefined> => {
+    const updatedOrder = await OrderDb.update(order, {
+      where: { id: order.id },
+    }) as unknown as OrderEntity;
+
+    return updatedOrder;
+  }
+
+  deleteOrder = async (id: number): Promise<boolean> => {
+    const rowDeleted = await OrderDb.destroy({
+      where: { id },
+    });
+
+    return rowDeleted === 1;
+  }
 }
 
-export const deleteOrder = async (id: UUID): Promise<void> => {
-  await orderDb.deleteOrder(id);
-};
+export const orderRepository = new OrderRepository();

@@ -1,5 +1,4 @@
 import React, { FC, useContext, useMemo, useState } from 'react';
-import './Product.scss';
 import { Button } from '../../../components/Button/Button';
 import EmptyImage from '../../../assets/icons/EmptyImage.svg';
 import { ModalWindow } from '../../../components/ModalWindow/ModalWindow';
@@ -8,8 +7,8 @@ import CloseIcon from '../../../assets/icons/Close.svg';
 import { useForm, useHttp } from '../../../hooks';
 import { ActionUpdateCart, UUID } from '../../../interfaces';
 import { BASE_URL, HttpMethods } from '../../../constants';
-import { STORAGE_NAME } from '../../../constants/storage';
 import { Context } from '../../../context/context';
+import './Product.scss';
 
 interface ProductProps {
   title: string;
@@ -29,8 +28,7 @@ export const Product: FC<ProductProps> = ({
   const [isOpenUpdate, setIsOpenUpdate] = useState(false);
   const [isOpenDelete, setIsOpenDelete] = useState(false);
   const [form, changeHandler] = useForm({ title, description, price });
-  const storage = JSON.parse(localStorage.getItem(STORAGE_NAME));
-  const userId = storage?.userId;
+  const { productCountHandler, userId } = useContext(Context);
   const { request } = useHttp(false);
 
   const onCloseUpdate = (): void => {
@@ -52,7 +50,6 @@ export const Product: FC<ProductProps> = ({
 
   const onDelete = () => {
     setIsOpenDelete(true);
-    console.log('delete');
   };
 
   const deleteHandler = () => {
@@ -60,8 +57,8 @@ export const Product: FC<ProductProps> = ({
     setIsOpenDelete(false);
   };
 
-  const onAddToCart = () => {
-    request(
+  const onAddToCart = async () => {
+    await request(
       `${BASE_URL}/user/cart`,
       HttpMethods.PUT,
       {
@@ -71,6 +68,7 @@ export const Product: FC<ProductProps> = ({
         action: ActionUpdateCart.ADD_ITEM,
       },
     );
+    productCountHandler();
   };
 
   const inputsValuesUpdateProduct: InputValues[] = useMemo(() => [

@@ -5,15 +5,9 @@ import { Button } from '../Button/Button';
 import { Context } from '../../context/context';
 import './LoginBlock.scss';
 
-interface LoginBlockProps {
-  countProducts?: number;
-}
-
-export const LoginBlock: FC<LoginBlockProps> = ({
-  countProducts = 0,
-}: LoginBlockProps): JSX.Element => {
+export const LoginBlock: FC = (): JSX.Element => {
   const history = useHistory();
-  const { logout, isAuthenticated, userLogin } = useContext(Context);
+  const { logout, isAuthenticated, userLogin, productCount } = useContext(Context);
 
   const goToRegister = () => {
     history.push('/register');
@@ -53,7 +47,7 @@ export const LoginBlock: FC<LoginBlockProps> = ({
               </div>
               <div className="cart__icon">
                 <Button onClick={goToCart} Icon={CartIcon} />
-                <div className="cart__count">{countProducts}</div>
+                <div className="cart__count">{productCount}</div>
               </div>
             </div>
           )

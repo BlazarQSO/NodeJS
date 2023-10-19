@@ -52,7 +52,6 @@ export const ProductsPage: FC = (): JSX.Element => {
     defaultValue: [],
   });
   const [isOpenCreateProduct, setIsOpenCreateProduct] = useState(false);
-
   const onClose = (): void => {
     setIsOpenCreateProduct(false);
   };

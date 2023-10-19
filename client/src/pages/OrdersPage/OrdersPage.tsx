@@ -7,14 +7,12 @@ import { BASE_URL, HttpMethods } from '../../constants';
 import { useGetData, useHttp } from '../../hooks';
 import { OrderEntity, OrderStatus, UUID } from '../../interfaces';
 import { Loading } from '../../components/Loading/Loading';
-import { STORAGE_NAME } from '../../constants/storage';
-import './OrdersPage.scss';
 import { Context } from '../../context/context';
+import './OrdersPage.scss';
 
 export const OrdersPage: FC = (): JSX.Element => {
   const history = useHistory();
-  const storage = JSON.parse(localStorage.getItem(STORAGE_NAME));
-  const userId = storage?.userId;
+  const { userId } = useContext(Context);
   const { loading, request } = useHttp(true);
   // fake admin role
   const isAdminRole = history.location.pathname.endsWith('/all');
@@ -24,6 +22,7 @@ export const OrdersPage: FC = (): JSX.Element => {
     url: isAdminRole ? `${BASE_URL}/user/orders/all` : `${BASE_URL}/user/orders`,
     method: isAdminRole ? HttpMethods.GET : HttpMethods.POST,
     body: isAdminRole ? null : { userId },
+    dependencies: userId,
   });
 
   const onDeleteOrder = async (id: UUID) => {

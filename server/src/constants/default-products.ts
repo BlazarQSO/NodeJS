@@ -29,4 +29,4 @@ export const defaultProducts = [
     price: 26612,
     img: 'ASUS Zenbook',
   },
-]
+];

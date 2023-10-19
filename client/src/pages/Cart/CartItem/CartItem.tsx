@@ -13,19 +13,19 @@ import { Context } from '../../../context/context';
 interface CartItemProps {
   product: ProductEntity;
   count: number;
+  onDependenciesUpdate: () => void;
 }
 
 export const CartItem: FC<CartItemProps> = ({
   product,
   count,
+  onDependenciesUpdate,
 }: CartItemProps): JSX.Element => {
-  const [cartCount, setCartCount] = useState(count);
-  const { request } = useHttp(false);
-  const storage = JSON.parse(localStorage.getItem(STORAGE_NAME));
-  const userId = storage?.userId;
+  const { loading, request } = useHttp(false);
+  const { productCountHandler, userId } = useContext(Context);
 
-  const onDeleteProduct = () => {
-    request(
+  const onDeleteProduct = async () => {
+    await request(
       `${BASE_URL}/user/cart`,
       HttpMethods.PUT,
       {
@@ -34,36 +34,40 @@ export const CartItem: FC<CartItemProps> = ({
         action: ActionUpdateCart.DELETE_ITEM,
       },
     );
+    productCountHandler();
+    onDependenciesUpdate();
   };
 
-  const onDecreaseCount = () => {
-    if (cartCount > 0) {
-      setCartCount(cartCount - 1);
-      request(
+  const onDecreaseCount = async () => {
+    if (count > 0) {
+      await request(
         `${BASE_URL}/user/cart`,
         HttpMethods.PUT,
         {
           userId,
           productId: product.id,
-          count: cartCount - 1,
+          count: count - 1,
           action: ActionUpdateCart.UPDATE_ITEM,
         },
       );
+      productCountHandler();
+      onDependenciesUpdate();
     }
   };
 
-  const onIncreaseCount = () => {
-    setCartCount(cartCount + 1);
-    request(
+  const onIncreaseCount = async () => {
+    await request(
       `${BASE_URL}/user/cart`,
       HttpMethods.PUT,
       {
         userId,
         productId: product.id,
-        count: cartCount + 1,
+        count: count + 1,
         action: ActionUpdateCart.UPDATE_ITEM,
       },
     );
+    productCountHandler();
+    onDependenciesUpdate();
   };
 
   return (
@@ -72,11 +76,11 @@ export const CartItem: FC<CartItemProps> = ({
       <div className="cart-item__control">
         <div className="cart-item__price">{product.price}</div>
         <div className="cart-item__change-count">
-          <Button onClick={onDecreaseCount} Icon={MinusIcon} />
+          <Button onClick={onDecreaseCount} Icon={MinusIcon} disabled={loading} />
           <div className="cart-item__count">
-            {cartCount}
+            {count}
           </div>
-          <Button onClick={onIncreaseCount} Icon={PlusIcon} />
+          <Button onClick={onIncreaseCount} Icon={PlusIcon} disabled={loading} />
           <Button onClick={onDeleteProduct} Icon={BucketIcon} />
         </div>
       </div>

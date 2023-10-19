@@ -1,20 +1,16 @@
-import { UUID } from 'crypto';
-
-export interface OrderEntity {
-  id: UUID;
-  userId: UUID;
-  cartId: UUID;
+export interface IOrder {
+  userId: number;
   paymentType: PaymentType;
-  delivery: Delivery;
-  comments: string;
+  deliveryType: DeliveryType;
+  address: string;
   status: OrderStatus;
+  comments: string;
   total: number;
   date: Date;
 }
 
-export type Delivery = {
-  deliveryType: DeliveryType;
-  address: string;
+export interface OrderEntity extends IOrder {
+  id: number;
 }
 
 export enum OrderStatus {
@@ -32,5 +28,3 @@ export enum DeliveryType {
   COURIER = 'courier',
   POST = 'post',
 }
-
-export type RequestOrderBody = Omit<OrderEntity, 'id'>;

@@ -35,7 +35,6 @@ export const useHttp = (defaultLoading: boolean): UseHttp => {
       }
 
       const response = await fetch(url, { method, body, headers: reqHeaders } as RequestInit);
-      console.log('response!!!', response);
       const data = response.status !== StatusCode.NO_CONTENT
         && response.status !== StatusCode.NOT_FOUND
         && await response.json();
@@ -49,8 +48,6 @@ export const useHttp = (defaultLoading: boolean): UseHttp => {
       return data;
     } catch (error) {
       isLoading && setLoading(false);
-      setError(error.message);
-      throw error;
     }
   }, []);
 
