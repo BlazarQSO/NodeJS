@@ -17,7 +17,7 @@ class UserRepository {
           });
           !found && await UserDb.create({ email, login, password: hashedPassword });
         }));
-      }, 4000);
+      }, 2000);
     }
 
     addDefaultUsers();

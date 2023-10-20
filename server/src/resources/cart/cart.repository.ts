@@ -14,7 +14,7 @@ class CartRepository {
           });
           !found && await CartDb.create({ userId, isDeleted });
         }));
-      }, 3000);
+      }, 10000);
     }
 
     addDefaultUsers();

@@ -14,7 +14,7 @@ class OrderRepository {
           });
           !found && await OrderDb.create({ ...order });
         }));
-      }, 3000);
+      }, 20000);
     }
 
     addDefaultUsers();

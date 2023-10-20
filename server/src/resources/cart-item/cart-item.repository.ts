@@ -14,7 +14,7 @@ class CartItemRepository {
           });
           !found && await CartItemDb.create({ ...cartItem });
         }));
-      }, 5000);
+      }, 15000);
     }
     addDefaultCartItems();
   }

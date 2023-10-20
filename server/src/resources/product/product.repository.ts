@@ -14,7 +14,7 @@ class ProductRepository {
           });
           !found && await ProductDb.create({ title, price, description });
         }));
-      }, 5000);
+      }, 1000);
     }
     addDefaultProducts();
   }
