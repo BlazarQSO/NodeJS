@@ -1,12 +1,14 @@
-version: '3'
+version: '3.3'
 services:
-  postgres-db:
-    image: "postgres:16"
-    container_name: "store"
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=root
-      - POSTGRES_DB=postgres
-    restart: always
-    ports:
-      - '5432:5432'
+    mongo:
+        ports:
+            - '27017:27017'
+        container_name: dkrcomp-mongo
+        restart: always
+        logging:
+            options:
+                max-size: 1g
+        environment:
+            - MONGO_INITDB_ROOT_USERNAME=Sergey
+            - MONGO_INITDB_ROOT_PASSWORD=Pass123
+        image: mongo
