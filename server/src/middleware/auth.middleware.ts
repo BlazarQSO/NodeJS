@@ -2,13 +2,12 @@ import { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import { errorHandler } from '../utils';
 import { HttpMethods, Separators, StatusCode, messages } from '../constants';
-import { CustomRequest } from '../types/declaration';
 import { UUID } from 'crypto';
-import 'dotenv/config';
 import { JWT_SECRET } from '../public.env';
+import 'dotenv/config';
 
 const authorizationCallBack = async (
-  req: CustomRequest,
+  req: Request,
   res: Response,
   next?: NextFunction,
 ): Promise<Response | undefined | void> => {
@@ -24,7 +23,7 @@ const authorizationCallBack = async (
   }
 
   const decodedToken = jwt.verify(token, JWT_SECRET);
-  req.userAuth = decodedToken as UUID;
+  // req.userAuth = decodedToken as UUID;
   next?.();
 }
 

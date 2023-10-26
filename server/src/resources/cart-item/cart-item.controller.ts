@@ -11,13 +11,13 @@ cartItemRouter.get('/cart/items', async (_, res): Promise<void> => {
 });
 
 cartItemRouter.post('/cart/items', async (req, res): Promise<void> => {
-  const cartItems = await cartItemService.getCartItems(Number(req.body.cartId));
+  const cartItems = await cartItemService.getCartItems(req.body.cartId);
 
   res.status(StatusCode.OK).send(cartItems);
 });
 
 cartItemRouter.post('/cart/item', async (req, res): Promise<void> => {
-  const cartItem = await cartItemService.getCartItem(Number(req.body.id));
+  const cartItem = await cartItemService.getCartItem(req.body.id);
 
   res.status(StatusCode.OK).send(cartItem);
 });
@@ -35,7 +35,7 @@ cartItemRouter.put('/cart/item', async (req, res): Promise<void> => {
 });
 
 cartItemRouter.delete('/cart/item', async (req, res): Promise<void> => {
-  await cartItemService.deleteCartItem(Number(req.body.id));
+  await cartItemService.deleteCartItem(req.body.id);
 
   res.sendStatus(StatusCode.NO_CONTENT);
 });

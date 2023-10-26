@@ -1,7 +1,6 @@
 import express from 'express';
 import * as userService from './user.service';
 import { StatusCode } from '../../constants';
-import { CustomRequest } from '../../types/declaration';
 import { deleteCart, createCart } from '../cart/cart.service';
 
 const userRouter = express.Router();
@@ -13,8 +12,8 @@ userRouter.get('/', async (_, res): Promise<void> => {
 });
 
 // auth admin role
-userRouter.get('/:id', async (req: CustomRequest, res): Promise<void> => {
-  const user = await userService.getUser(Number(req.params.id));
+userRouter.get('/:id', async (req, res): Promise<void> => {
+  const user = await userService.getUser(req.params.id);
 
   if (user) {
     res.status(StatusCode.OK).send(user);
@@ -25,18 +24,18 @@ userRouter.get('/:id', async (req: CustomRequest, res): Promise<void> => {
 
 userRouter.post('/', async (req, res): Promise<void> => {
   const user = await userService.createUser(req.body);
-  const cart = await createCart({ userId: Number(user.id), isDeleted: false });
+  const cart = await createCart({ userId: user._id as string, isDeleted: false });
 
   res.status(StatusCode.CREATED).send({ user, cart });
 });
 
-userRouter.put('/', async (req: CustomRequest, res): Promise<void> => {
+userRouter.put('/', async (req, res): Promise<void> => {
   const user = await userService.updateUser(req.body);
 
   res.status(StatusCode.OK).send(user);
 });
 
-userRouter.delete('/', async (req: CustomRequest, res): Promise<void> => {
+userRouter.delete('/', async (req, res): Promise<void> => {
   await userService.deleteUser(req.body.id);
   await deleteCart(req.body.id);
 

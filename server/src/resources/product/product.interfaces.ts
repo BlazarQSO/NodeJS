@@ -1,3 +1,5 @@
+import { Types } from 'mongoose';
+
 export interface IProduct {
   title: string;
   description: string;
@@ -6,5 +8,5 @@ export interface IProduct {
 }
 
 export interface ProductEntity extends IProduct {
-  id: number;
+  _id: string | Types.ObjectId;
 }

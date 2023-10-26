@@ -3,14 +3,16 @@ import { IOrder, OrderEntity } from './order.interfaces';
 
 export const getOrders = (): Promise<OrderEntity[]> => orderRepository.getOrders();
 
-export const getOrder = (id: number): Promise<OrderEntity | undefined> => orderRepository.getOrder(id);
+export const getOrder = (id: string): Promise<OrderEntity | null> => orderRepository.getOrder(id);
 
-export const getUserOrders = (userId: number): Promise<OrderEntity[]> => orderRepository.getUserOrders(userId);
+export const getUserOrders = (
+  userId: string,
+): Promise<OrderEntity[] | null> => orderRepository.getUserOrders(userId);
 
 export const createOrder = (order: IOrder): Promise<OrderEntity> => orderRepository.createOrder(order);
 
 export const updateOrder = (
   order: OrderEntity,
-): Promise<OrderEntity | undefined> => orderRepository.updateOrder(order);
+): Promise<OrderEntity | null> => orderRepository.updateOrder(order);
 
-export const deleteOrder = (id: number): Promise<boolean> => orderRepository.deleteOrder(id);
+export const deleteOrder = (id: string): Promise<OrderEntity | null> => orderRepository.deleteOrder(id);

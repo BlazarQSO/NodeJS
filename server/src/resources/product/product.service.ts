@@ -1,9 +1,9 @@
 import { productRepository } from './product.repository';
 import { IProduct, ProductEntity } from './product.interfaces';
 
-export const getProducts = (): Promise<ProductEntity[]> => productRepository.getProducts();
+export const getProducts = (): Promise<ProductEntity[] | null> => productRepository.getProducts();
 
-export const getProduct = (id: number): Promise<ProductEntity | undefined> => productRepository.getProduct(id);
+export const getProduct = (id: string): Promise<ProductEntity | null> => productRepository.getProduct(id);
 
 export const createProduct = (product: IProduct): Promise<ProductEntity> => {
   return productRepository.createProduct(product);
@@ -11,6 +11,6 @@ export const createProduct = (product: IProduct): Promise<ProductEntity> => {
 
 export const updateProduct = (
   product: ProductEntity,
-): Promise<ProductEntity | undefined> => productRepository.updateProduct(product);
+): Promise<ProductEntity | null> => productRepository.updateProduct(product);
 
-export const deleteProduct = (id: number): Promise<boolean> => productRepository.deleteProduct(id);
+export const deleteProduct = (id: string): Promise<ProductEntity | null> => productRepository.deleteProduct(id);

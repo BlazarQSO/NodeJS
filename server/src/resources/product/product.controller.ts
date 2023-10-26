@@ -11,7 +11,7 @@ productRouter.get('/', async (_, res): Promise<void> => {
 });
 
 productRouter.get('/:id', async (req, res): Promise<void> => {
-  const product = await productService.getProduct(Number(req.params.id));
+  const product = await productService.getProduct(req.params.id);
 
   res.status(StatusCode.OK).send(product);
 });
@@ -33,7 +33,7 @@ productRouter.put('/:id', async (req, res): Promise<void> => {
 
 // admin role
 productRouter.delete('/:id', async (req, res): Promise<void> => {
-  await productService.deleteProduct(Number(req.params.id));
+  await productService.deleteProduct(req.params.id);
 
   res.sendStatus(StatusCode.NO_CONTENT);
 });

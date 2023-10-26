@@ -2,7 +2,6 @@ import { Router } from 'express';
 import * as cartService from './cart.service';
 import { StatusCode } from '../../constants';
 import { auth } from '../../middleware/auth.middleware';
-import { CustomRequest } from '../../types/declaration';
 import { schemaUpdateCart } from '../../validators/cart.validations';
 import { createValidator } from 'express-joi-validation'
 
@@ -17,8 +16,8 @@ cartRouter.get('/cart/all', async (_, res): Promise<void> => {
 });
 
 // auth
-cartRouter.post('/cart', async (req: CustomRequest, res): Promise<void> => {
-  const cart = await cartService.getCart(Number(req.body.userId));
+cartRouter.post('/cart', async (req, res): Promise<void> => {
+  const cart = await cartService.getCart(req.body.userId);
 
   res.status(StatusCode.OK).send(cart);
 });
@@ -36,8 +35,8 @@ cartRouter.put('/cart', validator.body(schemaUpdateCart), async (req, res): Prom
   res.status(StatusCode.OK).send(updatedCart);
 });
 
-cartRouter.delete('/cart/', auth, async (req: CustomRequest, res): Promise<void> => {
-  await cartService.deleteCart(Number(req.body.id));
+cartRouter.delete('/cart/', auth, async (req, res): Promise<void> => {
+  await cartService.deleteCart(req.body.id);
 
   res.sendStatus(StatusCode.NO_CONTENT);
 });

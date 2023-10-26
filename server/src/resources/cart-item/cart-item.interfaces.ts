@@ -1,6 +1,8 @@
+import { Types } from 'mongoose';
+
 export interface ICartItem {
-  cartId: number;
-  productId: number;
+  cartId: string;
+  productId: string;
   title: string;
   description: string;
   price: number;
@@ -8,5 +10,5 @@ export interface ICartItem {
 }
 
 export interface CartItemEntity extends ICartItem {
-  id: number;
+  _id: string | Types.ObjectId;
 }

@@ -1,66 +1,37 @@
-import bcrypt from 'bcryptjs';
-import { UserDb } from '../../database/models.db';
-import { defaultUserDb } from '../../constants';
+import { User } from './user.models';
 import { IUser, UserEntity } from './user.interfaces';
-import { SALT } from '../../public.env';
 
 class UserRepository {
-  constructor() {
-    const addDefaultUsers = async () => {
-      setTimeout(() => {
-        Promise.all(defaultUserDb.map(async ({ email, login, password }) => {
-          const hashedPassword = await bcrypt.hash(password, SALT);
-          const found = await UserDb.findOne({
-            where: {
-              email,
-            },
-          });
-          !found && await UserDb.create({ email, login, password: hashedPassword });
-        }));
-      }, 2000);
-    }
-
-    addDefaultUsers();
-  }
-
   getUsers = async (): Promise<UserEntity[]> => {
-    const users = await UserDb.findAll() as unknown as UserEntity[];
+    const users = await User.find();
 
     return users;
   }
 
-  getUser = async (id: number): Promise<UserEntity | undefined> => {
-    const user = await UserDb.findOne({
-      where: { id },
-    }) as unknown as UserEntity;
+  getUser = async (id: string): Promise<UserEntity | null> => {
+    const user = await User.findById(id);
 
     return user;
   }
 
   createUser = async (user: IUser): Promise<UserEntity> => {
-    const { login, email, password } = user;
+    const newUser = new User(user);
+    await newUser.save();
 
-    const users = await UserDb.create(
-      { login, email, password }
-    ) as unknown as UserEntity;
-
-    return users;
+    return newUser;
   }
 
-  updateUser = async (user: UserEntity): Promise<UserEntity | undefined> => {
-    const updatedUser = await UserDb.update(user, {
-      where: { id: user.id },
-    }) as unknown as UserEntity;
+  updateUser = async (userEntity: UserEntity): Promise<UserEntity | null> => {
+    const { _id, ...user } = userEntity;
+    const updatedUser = await User.findByIdAndUpdate(_id, user);
 
     return updatedUser;
   }
 
-  deleteUser = async (id: number): Promise<boolean>  => {
-    const rowDeleted = await UserDb.destroy({
-        where: { id },
-      });
+  deleteUser = async (id: string): Promise<UserEntity | null>  => {
+    const deletedUser = await User.findByIdAndDelete(id);
 
-    return rowDeleted === 1;
+    return deletedUser;
   }
 }
 

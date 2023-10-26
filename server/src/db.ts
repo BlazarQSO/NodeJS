@@ -1,13 +1,9 @@
-import { Sequelize } from 'sequelize';
-import { DB_NAME, DB_USER, DB_PASSWORD, DB_HOST, DB_PORT } from './public.env';
+import { MONGO_DB_URL } from './public.env';
 
-export const sequelize = new Sequelize(
-  DB_NAME,
-  DB_USER,
-  DB_PASSWORD,
-  {
-    dialect: 'postgres',
-    host: DB_HOST,
-    port: DB_PORT,
-  }
-);
+export const mongoConfig = {
+  uri: MONGO_DB_URL,
+  options: {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  },
+};

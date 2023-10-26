@@ -1,5 +1,7 @@
+import { Types } from 'mongoose';
+
 export interface IOrder {
-  userId: number;
+  userId: string;
   paymentType: PaymentType;
   deliveryType: DeliveryType;
   address: string;
@@ -10,7 +12,7 @@ export interface IOrder {
 }
 
 export interface OrderEntity extends IOrder {
-  id: number;
+  _id: string | Types.ObjectId;
 }
 
 export enum OrderStatus {

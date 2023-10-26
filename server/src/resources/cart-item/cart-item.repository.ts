@@ -1,66 +1,43 @@
-import { defaultCartItemDb } from '../../constants';
-import { CartItemDb } from '../../database/models.db';
 import { ICartItem, CartItemEntity } from './cart-item.interfaces';
+import { CartItem } from './cart-item.models';
 
 class CartItemRepository {
-  constructor() {
-    const addDefaultCartItems = async () => {
-      setTimeout(() => {
-        Promise.all(defaultCartItemDb.map(async (cartItem) => {
-          const found = await CartItemDb.findOne({
-            where: {
-              id: cartItem.id,
-            },
-          });
-          !found && await CartItemDb.create({ ...cartItem });
-        }));
-      }, 15000);
-    }
-    addDefaultCartItems();
-  }
-
-  getAllCartItems = async (): Promise<CartItemEntity[]> => {
-    const allCartItems = await CartItemDb.findAll() as unknown as CartItemEntity[];
+ getAllCartItems = async (): Promise<CartItemEntity[]> => {
+    const allCartItems = await CartItem.find();
 
     return allCartItems;
   }
 
-  getCartItems = async (cartId: number): Promise<CartItemEntity[] | undefined> => {
-    const cartItems = await CartItemDb.findOne({
-      where: { cartId },
-    }) as unknown as CartItemEntity[];
+  getCartItems = async (cartId: string): Promise<CartItemEntity[] | null> => {
+    const cartItems = await CartItem.find({ cartId });
 
     return cartItems;
   }
 
-  getCartItem = async (id: number): Promise<CartItemEntity | undefined> => {
-    const cartItem = await CartItemDb.findOne({
-      where: { id },
-    }) as unknown as CartItemEntity;
+  getCartItem = async (id: string): Promise<CartItemEntity | null> => {
+    const cartItem = await CartItem.findOne({ id });
 
     return cartItem;
   }
 
   createCartItem = async (cartItem: ICartItem): Promise<CartItemEntity> => {
-    const newCartItem = await CartItemDb.create({ ...cartItem }) as unknown as CartItemEntity;
+    const newCartItem = new CartItem(cartItem);
+    await newCartItem.save();
 
     return newCartItem;
   }
 
-  updateCartItem = async (cartItem: CartItemEntity): Promise<CartItemEntity> => {
-    const updatedCartItem = await CartItemDb.update(cartItem, {
-      where: { id: cartItem.id },
-    }) as unknown as CartItemEntity;
+  updateCartItem = async (cartItemEntity: CartItemEntity): Promise<CartItemEntity | null> => {
+    const { _id, ...cartItem } = cartItemEntity;
+    const updatedCartItem = await CartItem.findByIdAndUpdate(_id, cartItem);
 
     return updatedCartItem;
   }
 
-  deleteCartItem = async (id: number): Promise<boolean> => {
-    const rowDeleted = await CartItemDb.destroy({
-      where: { id }
-    });
+  deleteCartItem = async (id: string): Promise<CartItemEntity | null> => {
+    const deletedCartItem = await CartItem.findByIdAndDelete({ id });
 
-    return rowDeleted === 1;
+    return deletedCartItem;
   }
 }
 
