@@ -1,7 +1,7 @@
 import express, { NextFunction, Request, Response } from 'express';
 import path from 'path';
 import YAML from 'yamljs';
-import mongoose, { ConnectOptions } from 'mongoose';
+import mongoose, { ConnectOptions, Types } from 'mongoose';
 import swaggerUi from 'swagger-ui-express';
 import { StatusCode } from './constants';
 import { userRouter } from './resources/user/user.controller';
@@ -9,14 +9,23 @@ import { cartRouter } from './resources/cart/cart.controller';
 import { productRouter } from './resources/product/product.controller';
 import { orderRouter } from './resources/order/order.controller';
 import { ValidationError } from 'express-validation';
-// import { routerAuth } from './auth/auth.routes';
+import { routerAuth } from './auth/auth.routes';
 import fileUpload from 'express-fileupload';
 import { PORT } from './public.env';
 import { errorMiddleware } from './middleware/error.middleware';
 import { cartItemRouter } from './resources/cart-item/cart-item.controller';
 import { mongoConfig } from './db';
 import cors from 'cors';
-import 'dotenv/config';
+import { UserEntity } from './resources/user/user.interfaces';
+import { verifyToken } from './middleware/verify-token.middleware';
+
+declare global {
+  namespace Express {
+      interface Request {
+        user: UserEntity;
+      }
+  }
+}
 
 const port = PORT;
 const app = express();
@@ -36,7 +45,8 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction): Response 
   return res.status(StatusCode.INTERNAL_SERVER_ERROR).json(err);
 });
 
-// app.use('/auth', routerAuth);
+app.use('/auth', routerAuth);
+app.use('/', verifyToken);
 app.use('/user', userRouter);
 app.use('/user', cartRouter);
 app.use('/user', cartItemRouter);

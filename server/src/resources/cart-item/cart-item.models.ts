@@ -2,7 +2,7 @@ import { Schema, model } from 'mongoose';
 import { ICartItem } from './cart-item.interfaces';
 
 const schema = new Schema<ICartItem>({
-  cartId: { type: String, required: true },
+  cartId: { type: Schema.Types.ObjectId, required: true },
   productId: { type: String, required: true },
   title: { type: String, required: true },
   description: { type: String },

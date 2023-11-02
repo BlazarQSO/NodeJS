@@ -1,3 +1,4 @@
+import { Types } from 'mongoose';
 import { IProduct, ProductEntity } from './product.interfaces';
 import { Product } from './product.models';
 
@@ -8,8 +9,8 @@ class ProductRepository {
     return products;
   }
 
-  getProduct = async (id: string): Promise<ProductEntity | null> => {
-    const product = await Product.findById({ id });
+  getProduct = async (_id: Types.ObjectId): Promise<ProductEntity | null> => {
+    const product = await Product.findById({ _id });
 
     return product;
   }
@@ -37,8 +38,8 @@ class ProductRepository {
     return updatedProduct;
   }
 
-  deleteProduct = async (id: string): Promise<ProductEntity | null> => {
-    const deletedProduct = await Product.findByIdAndDelete({ id });
+  deleteProduct = async (_id: Types.ObjectId): Promise<ProductEntity | null> => {
+    const deletedProduct = await Product.findByIdAndDelete({ _id });
 
     return deletedProduct;
   }

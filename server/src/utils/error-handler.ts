@@ -9,9 +9,9 @@ export const errorHandler = async (
   callback: (
     req: Request,
     res: Response,
-    next?: NextFunction,
+    next: NextFunction,
   ) => Promise<Response | undefined | void>,
-  next?: NextFunction,
+  next: NextFunction,
 ) => {
   try {
     callback(req, res, next);

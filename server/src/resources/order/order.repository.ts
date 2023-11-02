@@ -1,3 +1,4 @@
+import { Types } from 'mongoose';
 import { IOrder, OrderEntity } from './order.interfaces';
 import { Order } from './order.models'
 
@@ -8,13 +9,13 @@ class OrderRepository {
     return orders;
   }
 
-  getOrder = async (id: string): Promise<OrderEntity | null> => {
-    const order = await Order.findById({ id });
+  getOrder = async (id: Types.ObjectId): Promise<OrderEntity | null> => {
+    const order = await Order.findById(id);
 
     return order;
   }
 
-  getUserOrders = async (userId: string): Promise<OrderEntity[] | null> => {
+  getUserOrders = async (userId: Types.ObjectId): Promise<OrderEntity[] | null> => {
     const orders = await Order.find({ userId });
 
     return orders;
@@ -34,8 +35,8 @@ class OrderRepository {
     return updatedOrder;
   }
 
-  deleteOrder = async (id: string): Promise<OrderEntity | null> => {
-    const deletedOrder = await Order.findByIdAndDelete({ id });
+  deleteOrder = async (id: Types.ObjectId): Promise<OrderEntity | null> => {
+    const deletedOrder = await Order.findByIdAndDelete(id);
 
     return deletedOrder;
   }

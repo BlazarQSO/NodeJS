@@ -1,7 +1,7 @@
 import { Types } from 'mongoose';
 
 export interface ICartItem {
-  cartId: string;
+  cartId: Types.ObjectId;
   productId: string;
   title: string;
   description: string;
@@ -10,5 +10,5 @@ export interface ICartItem {
 }
 
 export interface CartItemEntity extends ICartItem {
-  _id: string | Types.ObjectId;
+  _id: Types.ObjectId;
 }

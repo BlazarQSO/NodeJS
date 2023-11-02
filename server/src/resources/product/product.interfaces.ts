@@ -8,5 +8,5 @@ export interface IProduct {
 }
 
 export interface ProductEntity extends IProduct {
-  _id: string | Types.ObjectId;
+  _id: Types.ObjectId;
 }

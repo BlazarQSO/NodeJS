@@ -1,16 +1,16 @@
+import { Types } from 'mongoose';
 import { CartEntity, ICart } from './cart.interfaces';
 import { Cart } from './cart.models';
 
 class CartRepository {
   getCarts = async (): Promise<CartEntity[]> => {
     const carts = await Cart.find();
-    console.log('carts', carts);
 
     return carts;
   }
 
-  getCart = async (userId: string): Promise<CartEntity | null> => {
-    const cart = await Cart.findById({ userId });
+  getCart = async (id: Types.ObjectId): Promise<CartEntity | null> => {
+    const cart = await Cart.findById(id);
 
     return cart;
   }
@@ -29,7 +29,7 @@ class CartRepository {
     return updatedCart;
   }
 
-  deleteCart = async (id: string): Promise<CartEntity | null> => {
+  deleteCart = async (id: Types.ObjectId): Promise<CartEntity | null> => {
     const deletedCart = await Cart.findByIdAndDelete(id);
 
     return deletedCart;

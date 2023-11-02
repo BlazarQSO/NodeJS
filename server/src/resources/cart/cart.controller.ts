@@ -1,42 +1,39 @@
 import { Router } from 'express';
 import * as cartService from './cart.service';
 import { StatusCode } from '../../constants';
-import { auth } from '../../middleware/auth.middleware';
 import { schemaUpdateCart } from '../../validators/cart.validations';
 import { createValidator } from 'express-joi-validation'
+import { Types } from 'mongoose';
 
 const validator = createValidator();
 const cartRouter = Router();
 
-// admin role
-cartRouter.get('/cart/all', async (_, res): Promise<void> => {
+cartRouter.get('/cart', async (_, res): Promise<void> => {
   const carts = await cartService.getCarts();
 
   res.status(StatusCode.OK).send(carts);
 });
 
-// auth
-cartRouter.post('/cart', async (req, res): Promise<void> => {
-  const cart = await cartService.getCart(req.body.userId);
+cartRouter.get('/cart/:id', async (req, res): Promise<void> => {
+  const cart = await cartService.getCart(req.params.id as unknown as Types.ObjectId);
 
   res.status(StatusCode.OK).send(cart);
 });
 
-cartRouter.post('/user/cart/', auth, async (req, res): Promise<void> => {
+cartRouter.post('/cart', async (req, res): Promise<void> => {
   const cart = await cartService.createCart(req.body);
 
   res.status(StatusCode.CREATED).send(cart);
 });
 
-// auth
-cartRouter.put('/cart', validator.body(schemaUpdateCart), async (req, res): Promise<void> => {
-  const updatedCart = await cartService.updateCart(req.body);
+cartRouter.put('/cart/:id', validator.body(schemaUpdateCart), async (req, res): Promise<void> => {
+  const updatedCart = await cartService.updateCart({ ...req.body, _id: req.params.id });
 
   res.status(StatusCode.OK).send(updatedCart);
 });
 
-cartRouter.delete('/cart/', auth, async (req, res): Promise<void> => {
-  await cartService.deleteCart(req.body.id);
+cartRouter.delete('/cart/:id', async (req, res): Promise<void> => {
+  await cartService.deleteCart(req.params.id as unknown as Types.ObjectId);
 
   res.sendStatus(StatusCode.NO_CONTENT);
 });

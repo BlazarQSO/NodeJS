@@ -1,3 +1,4 @@
+import { Types } from 'mongoose';
 import { ICartItem, CartItemEntity } from './cart-item.interfaces';
 import { CartItem } from './cart-item.models';
 
@@ -8,14 +9,14 @@ class CartItemRepository {
     return allCartItems;
   }
 
-  getCartItems = async (cartId: string): Promise<CartItemEntity[] | null> => {
+  getCartItems = async (cartId: Types.ObjectId): Promise<CartItemEntity[] | null> => {
     const cartItems = await CartItem.find({ cartId });
 
     return cartItems;
   }
 
-  getCartItem = async (id: string): Promise<CartItemEntity | null> => {
-    const cartItem = await CartItem.findOne({ id });
+  getCartItem = async (id: Types.ObjectId): Promise<CartItemEntity | null> => {
+    const cartItem = await CartItem.findById(id);
 
     return cartItem;
   }
@@ -34,8 +35,8 @@ class CartItemRepository {
     return updatedCartItem;
   }
 
-  deleteCartItem = async (id: string): Promise<CartItemEntity | null> => {
-    const deletedCartItem = await CartItem.findByIdAndDelete({ id });
+  deleteCartItem = async (id: Types.ObjectId): Promise<CartItemEntity | null> => {
+    const deletedCartItem = await CartItem.findByIdAndDelete(id);
 
     return deletedCartItem;
   }

@@ -8,5 +8,5 @@ export interface IUser {
 }
 
 export interface UserEntity extends IUser {
-  _id: string | Types.ObjectId;
+  _id: Types.ObjectId;
 }

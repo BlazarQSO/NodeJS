@@ -1,33 +1,22 @@
 import { NextFunction, Request, Response } from 'express';
-import jwt from 'jsonwebtoken';
 import { errorHandler } from '../utils';
-import { HttpMethods, Separators, StatusCode, messages } from '../constants';
-import { UUID } from 'crypto';
-import { JWT_SECRET } from '../public.env';
-import 'dotenv/config';
+import { Role, StatusCode, messages } from '../constants';
 
 const authorizationCallBack = async (
   req: Request,
   res: Response,
-  next?: NextFunction,
+  next: NextFunction,
 ): Promise<Response | undefined | void> => {
-  if (req.method === HttpMethods.OPTIONS) {
-    return next?.();
-  }
+  const { user } = req;
 
-  // authorization = `Bearer ${token}`
-  const token = (req.headers.Authorization as string)?.split(Separators.SPACE)[1];
-
-  if (!token) {
+  if (user.role !== Role.ADMIN) {
     return res.status(StatusCode.UNAUTHORIZED).json({ message: messages.notAuthorized });
   }
 
-  const decodedToken = jwt.verify(token, JWT_SECRET);
-  // req.userAuth = decodedToken as UUID;
-  next?.();
+  next();
 }
 
-export const auth = async (
+export const isAuth = async (
   req: Request,
   res: Response,
   next: NextFunction

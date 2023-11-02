@@ -1,10 +1,10 @@
 import { Types } from 'mongoose';
 
 export interface ICart {
-  userId: string;
+  userId: Types.ObjectId;
   isDeleted?: boolean;
 }
 
 export interface CartEntity extends ICart {
-  _id: string | Types.ObjectId;
+  _id: Types.ObjectId;
 }

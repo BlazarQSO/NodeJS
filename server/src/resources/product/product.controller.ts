@@ -1,6 +1,8 @@
 import { Router } from 'express';
 import * as productService from './product.service';
 import { StatusCode } from '../../constants';
+import { Types } from 'mongoose';
+import { isAuth } from '../../middleware/auth.middleware';
 
 const productRouter = Router();
 
@@ -11,29 +13,27 @@ productRouter.get('/', async (_, res): Promise<void> => {
 });
 
 productRouter.get('/:id', async (req, res): Promise<void> => {
-  const product = await productService.getProduct(req.params.id);
+  const product = await productService.getProduct(req.params.id as unknown as Types.ObjectId);
 
   res.status(StatusCode.OK).send(product);
 });
 
-// admin role
-productRouter.post('/', async (req, res): Promise<void> => {
+productRouter.post('/', isAuth, async (req, res): Promise<void> => {
   const { img }: any = req.files || {};
   const product = await productService.createProduct({ ...req.body, img });
 
   res.status(StatusCode.CREATED).send(product);
 });
 
-// admin role
-productRouter.put('/:id', async (req, res): Promise<void> => {
-  const product = await productService.updateProduct({ id: req.params.id, ...req.body});
+productRouter.put('/:id', isAuth, async (req, res): Promise<void> => {
+  const product = await productService.updateProduct({ _id: req.params.id, ...req.body});
 
   res.status(StatusCode.OK).send(product);
 });
 
-// admin role
-productRouter.delete('/:id', async (req, res): Promise<void> => {
-  await productService.deleteProduct(req.params.id);
+productRouter.delete('/:id', isAuth, async (req, res): Promise<void> => {
+  console.log('delete req.user', req.user);
+  await productService.deleteProduct(req.params.id as unknown as Types.ObjectId);
 
   res.sendStatus(StatusCode.NO_CONTENT);
 });

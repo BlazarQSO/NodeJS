@@ -1,5 +1,6 @@
 import { User } from './user.models';
 import { IUser, UserEntity } from './user.interfaces';
+import { Types } from 'mongoose';
 
 class UserRepository {
   getUsers = async (): Promise<UserEntity[]> => {
@@ -8,7 +9,7 @@ class UserRepository {
     return users;
   }
 
-  getUser = async (id: string): Promise<UserEntity | null> => {
+  getUser = async (id: Types.ObjectId): Promise<UserEntity | null> => {
     const user = await User.findById(id);
 
     return user;
@@ -28,7 +29,7 @@ class UserRepository {
     return updatedUser;
   }
 
-  deleteUser = async (id: string): Promise<UserEntity | null>  => {
+  deleteUser = async (id: Types.ObjectId): Promise<UserEntity | null>  => {
     const deletedUser = await User.findByIdAndDelete(id);
 
     return deletedUser;
