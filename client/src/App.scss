@@ -1,0 +1,14 @@
+.body {
+  margin: 0;
+  color: #343434;
+}
+
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  box-sizing: border-box;
+  border-bottom: 2px solid gray;
+}

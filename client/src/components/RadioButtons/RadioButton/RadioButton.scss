@@ -1,0 +1,49 @@
+@import '../../../styles/styles.scss';
+
+.radio {
+  cursor: pointer;
+
+  &__input {
+    margin: 0;
+    visibility: hidden;
+
+    &:checked + span {
+      border: 2px solid darkgoldenrod;
+    }
+
+    &:checked + span:after {
+      opacity: 1;
+    }
+  }
+
+  &__custom {
+    cursor: pointer;
+    width: 24px;
+    height: 24px;
+    left: -6px;
+    top: 8px;
+    border: 2px solid #9a9a9a;
+    border-radius: 50%;
+    display: inline-block;
+    position: relative;
+  }
+
+  &__custom::after {
+    content: '';
+    width: 20px;
+    height: 20px;
+    background: goldenrod;
+    position: absolute;
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  &__label {
+    @include title-2;
+    cursor: pointer;
+  }
+}

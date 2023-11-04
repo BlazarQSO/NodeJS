@@ -1,0 +1,18 @@
+@import '../../styles/styles.scss';
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  height: 100px;
+  width: 100%;
+  box-sizing: border-box;
+  border-bottom: 2px solid gray;
+  align-items: center;
+
+  &__title {
+    @include header-1;
+    display: flex;
+    align-items: center;
+    margin-left: 5%;
+  }
+}
