@@ -4,6 +4,7 @@ import { errorHandler } from '../utils';
 import { HttpMethods, Separators, StatusCode, messages } from '../constants';
 import { JWT_SECRET } from '../public.env';
 import { UserEntity } from '../resources/user/user.interfaces';
+import { User } from '../resources/user/user.models';
 
 const authorizationCallBack = async (
   req: Request,
@@ -27,10 +28,21 @@ const authorizationCallBack = async (
     return res.status(StatusCode.FORBIDDEN).json({ message: messages.invalidToken });
   }
 
-  const user = jwt.verify(token, JWT_SECRET) as UserEntity;
-  req.user = user;
+  try {
+    const user = jwt.verify(token, JWT_SECRET) as UserEntity;
 
-  return next();
+    const foundUser = await User.findById(user._id);
+
+    if (!foundUser) {
+      return res.status(StatusCode.UNAUTHORIZED).json({ message: messages.invalidToken });
+    }
+
+    req.user = user;
+
+    return next();
+  } catch (error) {
+    return res.status(StatusCode.UNAUTHORIZED).json({ message: messages.invalidToken });
+  }
 }
 
 export const verifyToken = async (

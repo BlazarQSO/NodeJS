@@ -9,24 +9,24 @@ import { User } from '../resources/user/user.models';
 const registerCallBack = async (req: Request, res: Response): Promise<Response | undefined> => {
   const { email, login, password, role } = req.body;
 
-  if (!((email || login) && password)) {
-    res.status(StatusCode.BAD_REQUEST).json({ message: messages.enterData });
+  if (!((login || email) && password)) {
+    return res.status(StatusCode.BAD_REQUEST).json({ message: messages.enterData });
   }
 
   const foundEmail = email && await User.findOne({ email });
   if (foundEmail) {
-    return res.status(StatusCode.CONFLICT).json({ message: messages.emailAlreadyExists });
+    return res.status(StatusCode.BAD_REQUEST).json({ message: messages.emailAlreadyExists });
   }
   const foundLogin = login && await User.findOne({ login });
   if (foundLogin) {
-    return res.status(StatusCode.CONFLICT).json({ message: messages.loginAlreadyExists });
+    return res.status(StatusCode.BAD_REQUEST).json({ message: messages.loginAlreadyExists });
   }
 
   const hashedPassword = await bcrypt.hash(password, SALT);
 
   const newUser = await User.create({
     login,
-    email: email.toLowerCase(),
+    email: email?.toLowerCase(),
     password: hashedPassword,
     role,
   });
@@ -41,7 +41,7 @@ const loginCallBack = async (req: Request, res: Response): Promise<Response | un
   const { login, email, password } = req.body;
 
   if (!((login || email) && password)) {
-    res.status(StatusCode.BAD_REQUEST).json({ message: messages.enterData });
+    return res.status(StatusCode.BAD_REQUEST).json({ message: messages.enterData });
   }
 
   let foundUser = await User.findOne({ login });
@@ -61,7 +61,7 @@ const loginCallBack = async (req: Request, res: Response): Promise<Response | un
   }
 
   const token = jwt.sign(
-    { userId: foundUser._id, login, email, role: foundUser.role },
+    { _id: foundUser._id, login, email, role: foundUser.role },
     JWT_SECRET,
     { expiresIn: '2h' },
   );

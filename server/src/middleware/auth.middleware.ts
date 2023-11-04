@@ -10,7 +10,7 @@ const authorizationCallBack = async (
   const { user } = req;
 
   if (user.role !== Role.ADMIN) {
-    return res.status(StatusCode.UNAUTHORIZED).json({ message: messages.notAuthorized });
+    return res.status(StatusCode.FORBIDDEN).json({ message: messages.notAuthorized });
   }
 
   next();

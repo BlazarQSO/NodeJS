@@ -32,7 +32,6 @@ productRouter.put('/:id', isAuth, async (req, res): Promise<void> => {
 });
 
 productRouter.delete('/:id', isAuth, async (req, res): Promise<void> => {
-  console.log('delete req.user', req.user);
   await productService.deleteProduct(req.params.id as unknown as Types.ObjectId);
 
   res.sendStatus(StatusCode.NO_CONTENT);
