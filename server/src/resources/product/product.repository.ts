@@ -16,7 +16,7 @@ class ProductRepository {
   }
 
   createProduct = async (product: IProduct): Promise<ProductEntity> => {
-    const { img } = product;
+    // const { img } = product;
 
     let fileName;
 

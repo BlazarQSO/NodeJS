@@ -1,7 +1,7 @@
-import express, { NextFunction, Request, Response } from 'express';
+import express, { Request, Response } from 'express';
 import path from 'path';
 import YAML from 'yamljs';
-import mongoose, { ConnectOptions, Types } from 'mongoose';
+import mongoose, { ConnectOptions } from 'mongoose';
 import swaggerUi from 'swagger-ui-express';
 import { StatusCode } from './constants';
 import { userRouter } from './resources/user/user.controller';
@@ -11,13 +11,14 @@ import { orderRouter } from './resources/order/order.controller';
 import { ValidationError } from 'express-validation';
 import { routerAuth } from './auth/auth.routes';
 import fileUpload from 'express-fileupload';
-import { PORT } from './public.env';
 import { errorMiddleware } from './middleware/error.middleware';
 import { cartItemRouter } from './resources/cart-item/cart-item.controller';
 import { mongoConfig } from './db';
 import cors from 'cors';
 import { UserEntity } from './resources/user/user.interfaces';
 import { verifyToken } from './middleware/verify-token.middleware';
+import { Socket } from 'net';
+import 'dotenv/config';
 
 declare global {
   namespace Express {
@@ -27,7 +28,7 @@ declare global {
   }
 }
 
-const port = PORT;
+const port = process.env.PORT;
 const app = express();
 const swaggerDocument = YAML.load(path.join(__dirname, '../doc/api.yaml'));
 
@@ -37,7 +38,11 @@ app.use(express.static(path.resolve(__dirname, 'assets')));
 app.use(fileUpload({}));
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-app.use((err: Error, req: Request, res: Response, next: NextFunction): Response => {
+app.get('/health', (req, res) => {
+  res.status(200).json({ message: 'Application is healthy' });
+});
+
+app.use((err: Error, req: Request, res: Response): Response => {
   if (err instanceof ValidationError) {
     return res.status(err.statusCode).json(err);
   }
@@ -59,9 +64,43 @@ const start = async () => {
 	try {
 		await mongoose.connect(mongoConfig.uri, mongoConfig.options as ConnectOptions);
 
-		app.listen(port, () => {
+		const server = app.listen(port, () => {
 			console.log(`Server started on port ${port}`);
 		});
+
+		let connections: Socket[] = [];
+
+		server.on('connection', (connection) => {
+			connections.push(connection);
+
+			connection.on('close', () => {
+				connections = connections.filter((currentConnection) => currentConnection !== connection);
+			});
+		});
+
+		const shutdown = () => {
+			console.log('Received kill signal, shutting down gracefully');
+
+			server.close(() => {
+				console.log('Closed out remaining connections');
+				process.exit(0);
+			});
+
+			setTimeout(() => {
+				console.error('Could not close connections in time, forcefully shutting down');
+				process.exit(1);
+			}, 20000);
+
+			connections.forEach((connection) => connection.end());
+
+			setTimeout(() => {
+				connections.forEach((connection) => connection.destroy());
+			}, 10000);
+		}
+
+		process.on('SIGTERM', shutdown);
+		process.on('SIGINT', shutdown);
+
 	} catch (error) {
     console.log('error: ', error);
 		process.exit(1);

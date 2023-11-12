@@ -2,9 +2,9 @@ import { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import { errorHandler } from '../utils';
 import { HttpMethods, Separators, StatusCode, messages } from '../constants';
-import { JWT_SECRET } from '../public.env';
 import { UserEntity } from '../resources/user/user.interfaces';
 import { User } from '../resources/user/user.models';
+import 'dotenv/config';
 
 const authorizationCallBack = async (
   req: Request,
@@ -29,7 +29,7 @@ const authorizationCallBack = async (
   }
 
   try {
-    const user = jwt.verify(token, JWT_SECRET) as UserEntity;
+    const user = jwt.verify(token, String(process.env.JWT_SECRET)) as UserEntity;
 
     const foundUser = await User.findById(user._id);
 

@@ -3,8 +3,8 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { errorHandler } from '../utils';
 import { StatusCode, messages } from '../constants';
-import { JWT_SECRET, SALT } from '../public.env';
 import { User } from '../resources/user/user.models';
+import 'dotenv/config';
 
 const registerCallBack = async (req: Request, res: Response): Promise<Response | undefined> => {
   const { email, login, password, role } = req.body;
@@ -22,7 +22,7 @@ const registerCallBack = async (req: Request, res: Response): Promise<Response |
     return res.status(StatusCode.BAD_REQUEST).json({ message: messages.loginAlreadyExists });
   }
 
-  const hashedPassword = await bcrypt.hash(password, SALT);
+  const hashedPassword = await bcrypt.hash(password, Number(process.env.SALT));
 
   const newUser = await User.create({
     login,
@@ -62,7 +62,7 @@ const loginCallBack = async (req: Request, res: Response): Promise<Response | un
 
   const token = jwt.sign(
     { _id: foundUser._id, login, email, role: foundUser.role },
-    JWT_SECRET,
+    String(process.env.JWT_SECRET),
     { expiresIn: '2h' },
   );
 

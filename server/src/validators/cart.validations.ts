@@ -1,4 +1,4 @@
-import Joi from 'joi'
+import Joi from 'joi';
 
 // [PUT] /user/cart
 export const schemaUpdateCart = Joi.object({

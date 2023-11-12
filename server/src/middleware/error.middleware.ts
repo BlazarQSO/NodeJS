@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from 'express';
+import { Request, Response } from 'express';
 import { StatusCode } from '../constants';
 
 class ApiError extends Error {
@@ -24,7 +24,7 @@ class ApiError extends Error {
   }
 }
 
-export const errorMiddleware = (err: Error, req: Request, res: Response, next: NextFunction) => {
+export const errorMiddleware = (err: Error, req: Request, res: Response) => {
   if (err  instanceof ApiError) {
     return res.status(err.status).json({ message: err.message});
   }

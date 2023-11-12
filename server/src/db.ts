@@ -1,7 +1,7 @@
-import { MONGO_DB_URL } from './public.env';
+import 'dotenv/config';
 
 export const mongoConfig = {
-  uri: MONGO_DB_URL,
+  uri: String(process.env.MONGO_DB_URL),
   options: {
     useNewUrlParser: true,
     useUnifiedTopology: true,
