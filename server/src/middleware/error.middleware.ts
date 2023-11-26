@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { StatusCode } from '../constants';
+import { logger } from '../logger/logger';
 
 class ApiError extends Error {
   status: StatusCode
@@ -25,8 +26,11 @@ class ApiError extends Error {
 }
 
 export const errorMiddleware = (err: Error, req: Request, res: Response) => {
-  if (err  instanceof ApiError) {
+  logger.error(err.message);
+
+  if (err instanceof ApiError) {
     return res.status(err.status).json({ message: err.message});
   }
+
   return res.status(StatusCode.INTERNAL_SERVER_ERROR).json({ message: 'Something went wrong'});
 }

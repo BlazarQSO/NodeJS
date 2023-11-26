@@ -19,6 +19,7 @@ import { UserEntity } from './resources/user/user.interfaces';
 import { verifyToken } from './middleware/verify-token.middleware';
 import { Socket } from 'net';
 import 'dotenv/config';
+import { logger } from './logger/logger';
 
 declare global {
   namespace Express {
@@ -42,14 +43,6 @@ app.get('/health', (req, res) => {
   res.status(200).json({ message: 'Application is healthy' });
 });
 
-app.use((err: Error, req: Request, res: Response): Response => {
-  if (err instanceof ValidationError) {
-    return res.status(err.statusCode).json(err);
-  }
-
-  return res.status(StatusCode.INTERNAL_SERVER_ERROR).json(err);
-});
-
 app.use('/auth', routerAuth);
 app.use('/', verifyToken);
 app.use('/user', userRouter);
@@ -65,7 +58,7 @@ const start = async () => {
 		await mongoose.connect(mongoConfig.uri, mongoConfig.options as ConnectOptions);
 
 		const server = app.listen(port, () => {
-			console.log(`Server started on port ${port}`);
+			logger.info(`Server started on port ${port}`);
 		});
 
 		let connections: Socket[] = [];
@@ -79,15 +72,17 @@ const start = async () => {
 		});
 
 		const shutdown = () => {
-			console.log('Received kill signal, shutting down gracefully');
+			logger.info('Received kill signal, shutting down gracefully');
 
 			server.close(() => {
-				console.log('Closed out remaining connections');
+				logger.info('Closed out remaining connections');
 				process.exit(0);
 			});
 
+			mongoose.connection.close();
+
 			setTimeout(() => {
-				console.error('Could not close connections in time, forcefully shutting down');
+				logger.error('Could not close connections in time, forcefully shutting down');
 				process.exit(1);
 			}, 20000);
 
@@ -102,7 +97,7 @@ const start = async () => {
 		process.on('SIGINT', shutdown);
 
 	} catch (error) {
-    console.log('error: ', error);
+    logger.error('error: ', error);
 		process.exit(1);
   }
 }

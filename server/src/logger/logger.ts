@@ -2,7 +2,7 @@ import { Request } from 'express';
 import winston from 'winston';
 
 export const logger = winston.createLogger({
-  level: 'info',
+  levels: winston.config.syslog.levels,
   format: winston.format.json(),
   transports: [
     new winston.transports.Console(),
