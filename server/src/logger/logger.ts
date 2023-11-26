@@ -1,8 +1,10 @@
 import { Request } from 'express';
 import winston from 'winston';
+import 'dotenv/config';
 
 export const logger = winston.createLogger({
   levels: winston.config.syslog.levels,
+  level: process.env.LOG_LEVEL || 'info',
   format: winston.format.json(),
   transports: [
     new winston.transports.Console(),
