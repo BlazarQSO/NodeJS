@@ -1,0 +1,24 @@
+@import '../../styles/styles.scss';
+
+.products-page {
+  min-height: calc(100vh - 300px);
+  width: 90%;
+  padding-bottom: 24px;
+
+  &__header {
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between
+  }
+
+  &__title {
+    @include title-1;
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+}

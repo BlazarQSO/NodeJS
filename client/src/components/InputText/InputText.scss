@@ -1,0 +1,28 @@
+@import '../../styles/styles.scss';
+
+.input-text {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+
+  &__label {
+    @include label;
+  }
+
+  &__input {
+    @include text;
+    outline: none;
+    border: 1px solid darkgray;
+    width: 65%;
+
+    &:focus {
+      border: 1px solid gray;
+    }
+
+    &_disabled {
+      border: 0;
+      background: transparent;
+    }
+  }
+}
